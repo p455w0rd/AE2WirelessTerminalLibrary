@@ -1,0 +1,7 @@
+{
+	"conditions": {
+		"booster_enabled": "p455w0rd.ae2wtlib.init.recipefactoryconditions.BoosterRecipeEnabled",
+		"infinity_mechanic_new": "p455w0rd.ae2wtlib.init.recipefactoryconditions.NewInfinityMechanic",
+		"infinity_mechanic_old": "p455w0rd.ae2wtlib.init.recipefactoryconditions.OldInfinityMechanic"
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"conditions": [
+		{
+			"type": "ae2wtlib:booster_enabled",
+			"type": "ae2wtlib:infinity_mechanic_old"
+		}
+	],
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"a a",
+		" b ",
+		"   "
+	],
+	"key": {
+		"a": {
+			"item": "appliedenergistics2:material",
+			"data": 48
+		},
+		"b": {
+			"item": "appliedenergistics2:material",
+			"data": 41
+		}
+	},
+	"result": {
+		"item": "ae2wtlib:infinity_booster_card"
+	}
+}
