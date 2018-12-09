@@ -1,5 +1,4 @@
 bin
-#libs
 run
 *.class
 .gradle
