@@ -42,7 +42,7 @@ public class BaubleRenderDispatcher implements LayerRenderer<AbstractClientPlaye
 					IBaubleItem bauble = (IBaubleItem) piece.getItem();
 					IBaubleRender render = bauble.getRender();
 					if (render != null) {
-						render.doRenderLayer(renderPlayer, piece, entitylivingbaseIn, p_177141_2_, p_177141_3_, partialTicks, p_177141_5_, p_177141_6_, p_177141_7_, scale);
+						render.doRenderLayer(renderPlayer, piece, i, entitylivingbaseIn, p_177141_2_, p_177141_3_, partialTicks, p_177141_5_, p_177141_6_, p_177141_7_, scale);
 					}
 				}
 			}
