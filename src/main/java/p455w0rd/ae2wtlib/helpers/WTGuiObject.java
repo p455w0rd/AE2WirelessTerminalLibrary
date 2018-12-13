@@ -5,39 +5,26 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import appeng.api.AEApi;
-import appeng.api.config.AccessRestriction;
-import appeng.api.config.Actionable;
-import appeng.api.config.PowerMultiplier;
+import appeng.api.config.*;
 import appeng.api.features.ILocatable;
 import appeng.api.features.IWirelessTermHandler;
 import appeng.api.implementations.guiobjects.IGuiItemObject;
 import appeng.api.implementations.tiles.IWirelessAccessPoint;
-import appeng.api.networking.IGrid;
-import appeng.api.networking.IGridHost;
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.IMachineSet;
+import appeng.api.networking.*;
 import appeng.api.networking.energy.IEnergySource;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageGrid;
-import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.IMEMonitorHandlerReceiver;
-import appeng.api.storage.IStorageChannel;
-import appeng.api.storage.ITerminalHost;
+import appeng.api.storage.*;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
-import appeng.api.util.AECableType;
-import appeng.api.util.AEPartLocation;
-import appeng.api.util.DimensionalCoord;
-import appeng.api.util.IConfigManager;
+import appeng.api.util.*;
 import appeng.container.interfaces.IInventorySlotAware;
 import appeng.tile.networking.TileWireless;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import p455w0rd.ae2wtlib.api.ICustomWirelessTermHandler;
-import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
+import p455w0rd.ae2wtlib.api.*;
 import p455w0rd.ae2wtlib.api.networking.security.WTIActionHost;
-import p455w0rd.ae2wtlib.util.WTUtils;
 
 public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> implements ITerminalHost, IMEMonitor<O>, IEnergySource, IGuiItemObject, IInventorySlotAware, WTIActionHost {
 
@@ -270,7 +257,7 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 	@Override
 	public IGridNode getActionableNode() {
 		boolean ignoreRange = false;
-		if (!effectiveItem.isEmpty() && WTUtils.isAnyWT(effectiveItem)) {
+		if (!effectiveItem.isEmpty() && WTApi.instance().isAnyWT(effectiveItem)) {
 			if (effectiveItem.getItem() instanceof ICustomWirelessTerminalItem) {
 				ICustomWirelessTerminalItem item = (ICustomWirelessTerminalItem) effectiveItem.getItem();
 				ignoreRange = item.checkForBooster(effectiveItem);
@@ -348,7 +335,7 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 
 		final DimensionalCoord dc = wap.getLocation();
 
-		if (dc.getWorld() == WTUtils.world(myPlayer)) {
+		if (dc.getWorld() == myPlayer.getEntityWorld()) {
 			final double offX = dc.x - myPlayer.posX;
 			final double offY = dc.y - myPlayer.posY;
 			final double offZ = dc.z - myPlayer.posZ;

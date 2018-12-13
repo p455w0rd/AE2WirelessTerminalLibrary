@@ -24,7 +24,6 @@ import p455w0rd.ae2wtlib.client.render.ItemLayerWrapper;
 import p455w0rd.ae2wtlib.client.render.RenderLayerWT;
 import p455w0rd.ae2wtlib.init.*;
 import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
-import p455w0rd.ae2wtlib.util.WTUtils;
 
 /**
  * @author p455w0rd
@@ -80,7 +79,7 @@ public abstract class ItemWT extends AEBasePoweredItem implements IModelHolder, 
 		if ((int) aeCurrPower >= (int) aeMaxPower - 2) {
 			return false;
 		}
-		if (WTUtils.isWTCreative(is)) {
+		if (WTApi.instance().isWTCreative(is)) {
 			return false;
 		}
 		return true;
@@ -220,13 +219,13 @@ public abstract class ItemWT extends AEBasePoweredItem implements IModelHolder, 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean hasEffect(ItemStack is) {
-		if (WTUtils.isWTCreative(is)) {
+		if (WTApi.instance().isWTCreative(is)) {
 			return true;
 		}
 		if (LibConfig.USE_OLD_INFINTY_MECHANIC) {
 			return checkForBooster(is);
 		}
-		return WTUtils.hasInfiniteRange(is) && !WTUtils.isInRange(is) && getEncryptionKey(is) != null && !getEncryptionKey(is).isEmpty();
+		return WTApi.instance().hasInfiniteRange(is) && !WTApi.instance().isInRange(is) && getEncryptionKey(is) != null && !getEncryptionKey(is).isEmpty();
 	}
 
 	@Override
@@ -244,12 +243,12 @@ public abstract class ItemWT extends AEBasePoweredItem implements IModelHolder, 
 		if (p instanceof EntityPlayerMP) {
 			rangeCheck(wirelessTerminal, (EntityPlayerMP) p);
 		}
-		WTUtils.isBoosterInstalled(wirelessTerminal);
+		WTApi.instance().isBoosterInstalled(wirelessTerminal);
 	}
 
 	private void rangeCheck(ItemStack wirelessTerm, EntityPlayerMP player) {
-		boolean inRange = WTUtils.isInRangeOfWAP(wirelessTerm, player);
-		WTUtils.setInRange(wirelessTerm, inRange);
+		boolean inRange = WTApi.instance().isInRangeOfWAP(wirelessTerm, player);
+		WTApi.instance().setInRange(wirelessTerm, inRange);
 		LibNetworking.instance().sendTo(new PacketSetInRange(inRange), player);
 	}
 

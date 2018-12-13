@@ -18,11 +18,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.container.ContainerWT;
 import p455w0rd.ae2wtlib.container.slot.SlotAEBauble;
 import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.sync.packets.PacketBaubleSync;
-import p455w0rd.ae2wtlib.util.WTUtils;
 
 /**
  * @author p455w0rd
@@ -138,7 +138,7 @@ public class Baubles {
 				if (currentStack.getItem() instanceof IBauble) {
 					IBauble bauble = (IBauble) currentStack.getItem();
 					BaubleType type = bauble.getBaubleType(currentStack);
-					if (bauble.getBaubleType(currentStack) == BaubleType.HEAD && WTUtils.isAnyWT(currentStack)) {
+					if (bauble.getBaubleType(currentStack) == BaubleType.HEAD && WTApi.instance().isAnyWT(currentStack)) {
 						updateWTBauble(player, stack, slot);
 						LibNetworking.instance().sendTo(new PacketBaubleSync(stack, slot), (EntityPlayerMP) player);
 					}

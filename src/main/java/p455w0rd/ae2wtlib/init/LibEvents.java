@@ -29,12 +29,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.AE2WTLib;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.client.render.BaubleRenderDispatcher;
 import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.sync.WTPacket;
 import p455w0rd.ae2wtlib.sync.packets.PacketConfigSync;
 import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergyInv;
-import p455w0rd.ae2wtlib.util.WTUtils;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
 import p455w0rdslib.capabilities.CapabilityChunkLoader.ProviderTE;
 
@@ -152,12 +152,12 @@ public class LibEvents {
 			return;
 		}
 		InventoryPlayer playerInv = player.inventory;
-		List<Pair<Boolean, Pair<Integer, ItemStack>>> terminals = WTUtils.getAllWirelessTerminals(player);
+		List<Pair<Boolean, Pair<Integer, ItemStack>>> terminals = WTApi.instance().getAllWirelessTerminals(player);
 		ItemStack wirelessTerm = ItemStack.EMPTY;
 		boolean isBauble = false;
 		int wctSlot = -1;
 		for (int i = 0; i < terminals.size(); i++) {
-			if (WTUtils.shouldConsumeBoosters(terminals.get(i).getRight().getRight())) {
+			if (WTApi.instance().shouldConsumeBoosters(terminals.get(i).getRight().getRight())) {
 				wirelessTerm = terminals.get(i).getRight().getRight();
 				isBauble = terminals.get(i).getLeft();
 				wctSlot = terminals.get(i).getRight().getLeft();
@@ -168,12 +168,12 @@ public class LibEvents {
 		if (invSize <= 0) {
 			return;
 		}
-		if (!LibConfig.USE_OLD_INFINTY_MECHANIC && !wirelessTerm.isEmpty() && WTUtils.shouldConsumeBoosters(wirelessTerm)) {
+		if (!LibConfig.USE_OLD_INFINTY_MECHANIC && !wirelessTerm.isEmpty() && WTApi.instance().shouldConsumeBoosters(wirelessTerm)) {
 			for (int currentSlot = 0; currentSlot < invSize; currentSlot++) {
 				ItemStack slotStack = playerInv.getStackInSlot(currentSlot);
 				if (!slotStack.isEmpty() && slotStack.getItem() == LibItems.BOOSTER_CARD) {
-					playerInv.setInventorySlotContents(currentSlot, WTUtils.addInfinityBoosters(wirelessTerm, slotStack));
-					LibNetworking.instance().sendToDimension(new PacketSyncInfinityEnergyInv(WTUtils.getInfinityEnergy(wirelessTerm), player.getUniqueID(), isBauble, wctSlot), player.getEntityWorld().provider.getDimension());
+					playerInv.setInventorySlotContents(currentSlot, WTApi.instance().addInfinityBoosters(wirelessTerm, slotStack));
+					LibNetworking.instance().sendToDimension(new PacketSyncInfinityEnergyInv(WTApi.instance().getInfinityEnergy(wirelessTerm), player.getUniqueID(), isBauble, wctSlot), player.getEntityWorld().provider.getDimension());
 				}
 			}
 		}

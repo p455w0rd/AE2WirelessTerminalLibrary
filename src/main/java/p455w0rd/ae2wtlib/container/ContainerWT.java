@@ -34,8 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
-import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
-import p455w0rd.ae2wtlib.api.IWTContainer;
+import p455w0rd.ae2wtlib.api.*;
 import p455w0rd.ae2wtlib.api.networking.security.WTIActionHost;
 import p455w0rd.ae2wtlib.api.networking.security.WTPlayerSource;
 import p455w0rd.ae2wtlib.container.slot.*;
@@ -46,7 +45,6 @@ import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.integration.Baubles;
 import p455w0rd.ae2wtlib.inventory.WTInventoryBooster;
 import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
-import p455w0rd.ae2wtlib.util.WTUtils;
 
 public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfigurableObject, IConfigManagerHost, IAEAppEngInventory {
 
@@ -74,7 +72,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		player = ip.player;
 		this.wtSlot = wtSlot;
 		this.isBauble = isBauble;
-		containerstack = isBauble ? Baubles.getWTBySlot(player, wtSlot, ICustomWirelessTerminalItem.class) : WTUtils.getWTBySlot(player, wtSlot);
+		containerstack = isBauble ? Baubles.getWTBySlot(player, wtSlot, ICustomWirelessTerminalItem.class) : WTApi.instance().getWTBySlot(player, wtSlot);
 		obj = anchor instanceof WTGuiObject ? (WTGuiObject<?, ?>) anchor : null;
 		if (obj == null) {
 			setValidContainer(false);
@@ -83,7 +81,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 			ReflectionHelper.setPrivateValue(AEBaseContainer.class, this, new WTPlayerSource(ip.player, getActionHost(obj)), "mySrc");
 		}
 
-		if (LibConfig.WT_BOOSTER_ENABLED && !WTUtils.isWTCreative(getWirelessTerminal())) {
+		if (LibConfig.WT_BOOSTER_ENABLED && !WTApi.instance().isWTCreative(getWirelessTerminal())) {
 			if (LibConfig.USE_OLD_INFINTY_MECHANIC) {
 				addSlotToContainer(boosterSlot = new SlotBooster(boosterInventory, 134, -20));
 				boosterSlot.setContainer(this);
@@ -216,7 +214,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 	/*
 	protected static WTGuiObject<?, ?> getGuiObject(final ItemStack it, final EntityPlayer player, final World w, final int x, final int y, final int z) {
 		//TODO override in WCT/WFT
-	
+
 		if (!it.isEmpty()) {
 			IWirelessTermHandler wh = AEApi.instance().registries().wireless().getWirelessTerminalHandler(it);
 			if (wh instanceof ICustomWirelessTermHandler) {
@@ -226,7 +224,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 				return new WTGuiObject<IAEFluidStack>(wh, it, player, w, x, y, z);
 			}
 		}
-	
+
 		return null;
 	}
 	*/
@@ -251,7 +249,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		//TODO be sure to override in extending container
 		/*
 		if (Platform.isClient()) {
-		
+
 			if (stack == null && getTargetStack() == null) {
 				return;
 			}
@@ -332,7 +330,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 	}
 
 	protected boolean hasInfiniteRange() {
-		return WTUtils.hasInfiniteRange(containerstack);
+		return WTApi.instance().hasInfiniteRange(containerstack);
 	}
 
 	public boolean isInVanillaWAPRange() {
@@ -398,7 +396,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 				obj.extractAEPower(AEConfig.instance().wireless_getDrainRate(obj.getRange()), Actionable.MODULATE, PowerMultiplier.CONFIG);
 				if (!LibConfig.USE_OLD_INFINTY_MECHANIC) {
 					//if (!WCTUtils.isInRange(getWirelessTerminal())) {
-					WTUtils.setInRange(getWirelessTerminal(), true);
+					WTApi.instance().setInRange(getWirelessTerminal(), true);
 					LibNetworking.instance().sendTo(new PacketSetInRange(true), (EntityPlayerMP) getPlayerInv().player);
 					//}
 				}
@@ -407,10 +405,10 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 				obj.extractAEPower((int) (Math.min(500.0, AEConfig.instance().wireless_getDrainRate(obj.getRange()))), Actionable.MODULATE, PowerMultiplier.CONFIG);
 				if (!LibConfig.USE_OLD_INFINTY_MECHANIC) {
 					//if (WCTUtils.isInRange(getWirelessTerminal())) {
-					WTUtils.setInRange(getWirelessTerminal(), false);
+					WTApi.instance().setInRange(getWirelessTerminal(), false);
 					LibNetworking.instance().sendTo(new PacketSetInRange(false), (EntityPlayerMP) getPlayerInv().player);
 					//}
-					WTUtils.drainInfinityEnergy(getWirelessTerminal(), getPlayerInv().player, isBauble, wtSlot);
+					WTApi.instance().drainInfinityEnergy(getWirelessTerminal(), getPlayerInv().player, isBauble, wtSlot);
 				}
 			}
 			ticks = 0;

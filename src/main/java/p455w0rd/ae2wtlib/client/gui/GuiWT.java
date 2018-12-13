@@ -44,6 +44,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.client.gui.widgets.GuiScrollbar;
 import p455w0rd.ae2wtlib.client.render.StackSizeRenderer;
 import p455w0rd.ae2wtlib.client.render.StackSizeRenderer.ReadableNumberConverter;
@@ -53,7 +54,6 @@ import p455w0rd.ae2wtlib.container.slot.SlotPlayerHotBar;
 import p455w0rd.ae2wtlib.init.LibConfig;
 import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.integration.JEI;
-import p455w0rd.ae2wtlib.util.WTUtils;
 
 public abstract class GuiWT extends GuiContainer {
 
@@ -209,15 +209,15 @@ public abstract class GuiWT extends GuiContainer {
 			mc.fontRenderer.drawString(s, 7, 5, 4210752);
 			String warning = "";
 			if (LibConfig.WT_BOOSTER_ENABLED && !LibConfig.USE_OLD_INFINTY_MECHANIC) {
-				int infinityEnergyAmount = WTUtils.getInfinityEnergy(getWirelessTerminal());
-				if (WTUtils.hasInfiniteRange(getWirelessTerminal())) {
-					if (!WTUtils.isInRangeOfWAP(getWirelessTerminal(), WTUtils.player())) {
+				int infinityEnergyAmount = WTApi.instance().getInfinityEnergy(getWirelessTerminal());
+				if (WTApi.instance().hasInfiniteRange(getWirelessTerminal())) {
+					if (!WTApi.instance().isInRangeOfWAP(getWirelessTerminal(), Minecraft.getMinecraft().player)) {
 						if (infinityEnergyAmount < LibConfig.INFINTY_ENERGY_LOW_WARNING_AMOUNT) {
 							warning = TextFormatting.RED + "" + I18n.format("tooltip.infinity_energy_low.desc");
 						}
 					}
 				}
-				if (!WTUtils.isWTCreative(getWirelessTerminal()) && isPointInRegion(containerWT.getBoosterSlot().xPos, containerWT.getBoosterSlot().yPos, 16, 16, mouseX, mouseY) && Minecraft.getMinecraft().player.inventory.getItemStack().isEmpty()) {
+				if (!WTApi.instance().isWTCreative(getWirelessTerminal()) && isPointInRegion(containerWT.getBoosterSlot().xPos, containerWT.getBoosterSlot().yPos, 16, 16, mouseX, mouseY) && Minecraft.getMinecraft().player.inventory.getItemStack().isEmpty()) {
 					String amountColor = infinityEnergyAmount < LibConfig.INFINTY_ENERGY_LOW_WARNING_AMOUNT ? TextFormatting.RED.toString() : TextFormatting.GREEN.toString();
 					String infinityEnergy = I18n.format("tooltip.infinity_energy.desc") + ": " + amountColor + "" + (isShiftKeyDown() ? infinityEnergyAmount : ReadableNumberConverter.INSTANCE.toSlimReadableForm(infinityEnergyAmount)) + "" + TextFormatting.GRAY + " " + I18n.format("tooltip.units.desc");
 					drawTooltip(mouseX - offsetX, mouseY - offsetY, infinityEnergy);
@@ -289,7 +289,7 @@ public abstract class GuiWT extends GuiContainer {
 	@Override
 	protected boolean checkHotbarKeys(final int keyCode) {
 		final Slot theSlot = getSlotUnderMouse();
-		if (WTUtils.player().inventory.getItemStack().isEmpty() && theSlot != null) {
+		if (Minecraft.getMinecraft().player.inventory.getItemStack().isEmpty() && theSlot != null) {
 			if (theSlot.getStack().getItem() instanceof ICustomWirelessTerminalItem) {
 				return false;
 			}
@@ -450,7 +450,7 @@ public abstract class GuiWT extends GuiContainer {
 						boolean isValid = s.isItemValid(is) || s instanceof SlotOutput || s instanceof AppEngCraftingSlot || s instanceof SlotPlayerHotBar || s instanceof SlotDisabled || s instanceof SlotInaccessible || s instanceof SlotFake || s instanceof SlotRestrictedInput || s instanceof SlotDisconnected;
 						if (isValid && s instanceof SlotRestrictedInput) {
 							try {
-								isValid = ((SlotRestrictedInput) s).isValid(is, WTUtils.world());
+								isValid = ((SlotRestrictedInput) s).isValid(is, Minecraft.getMinecraft().world);
 							}
 							catch (final Exception err) {
 							}

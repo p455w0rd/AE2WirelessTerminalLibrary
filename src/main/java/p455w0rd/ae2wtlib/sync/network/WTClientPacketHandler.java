@@ -6,10 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.PacketThreadUtil;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import p455w0rd.ae2wtlib.sync.PacketCallState;
-import p455w0rd.ae2wtlib.sync.WTPacket;
-import p455w0rd.ae2wtlib.sync.WTPacketHandlerBase;
-import p455w0rd.ae2wtlib.util.WTUtils;
+import p455w0rd.ae2wtlib.sync.*;
 
 public class WTClientPacketHandler extends WTPacketHandlerBase implements IPacketHandler {
 
@@ -32,7 +29,7 @@ public class WTClientPacketHandler extends WTPacketHandlerBase implements IPacke
 
 				@Override
 				public void call(final WTPacket appEngPacket) {
-					appEngPacket.clientPacketData(manager, appEngPacket, WTUtils.player());
+					appEngPacket.clientPacketData(manager, appEngPacket, Minecraft.getMinecraft().player);
 				}
 			};
 

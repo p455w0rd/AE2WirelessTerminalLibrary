@@ -3,10 +3,10 @@ package p455w0rd.ae2wtlib.sync.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.container.ContainerWT;
 import p455w0rd.ae2wtlib.sync.WTPacket;
 import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
-import p455w0rd.ae2wtlib.util.WTUtils;
 
 /**
  * @author p455w0rd
@@ -38,7 +38,7 @@ public class PacketSyncInfinityEnergyContainer extends WTPacket {
 	@Override
 	public void clientPacketData(final INetworkInfo network, final WTPacket packet, final EntityPlayer player) {
 		if (player.openContainer instanceof ContainerWT) {
-			WTUtils.setInfinityEnergy(((ContainerWT) player.openContainer).getWirelessTerminal(), infinityEnergy);
+			WTApi.instance().setInfinityEnergy(((ContainerWT) player.openContainer).getWirelessTerminal(), infinityEnergy);
 		}
 	}
 }

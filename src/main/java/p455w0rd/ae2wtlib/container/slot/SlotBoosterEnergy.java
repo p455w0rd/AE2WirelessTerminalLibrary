@@ -11,10 +11,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.container.ContainerWT;
 import p455w0rd.ae2wtlib.init.*;
 import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergyInv;
-import p455w0rd.ae2wtlib.util.WTUtils;
 
 /**
  * @author p455w0rd
@@ -60,11 +60,11 @@ public class SlotBoosterEnergy extends AppEngSlot {
 		if (thisContainer != null) {
 			if (thisContainer instanceof ContainerWT) {
 				ContainerWT c = (ContainerWT) thisContainer;
-				WTUtils.addInfinityBoosters(c.getWirelessTerminal(), stack);
+				WTApi.instance().addInfinityBoosters(c.getWirelessTerminal(), stack);
 				c.detectAndSendChanges();
 				for (IContainerListener listener : c.getListeners()) {
 					if (listener instanceof EntityPlayerMP) {
-						LibNetworking.instance().sendTo(new PacketSyncInfinityEnergyInv(WTUtils.getInfinityEnergy(((ContainerWT) thisContainer).getWirelessTerminal()), ((EntityPlayerMP) listener).getUniqueID(), false, -1), (EntityPlayerMP) listener);
+						LibNetworking.instance().sendTo(new PacketSyncInfinityEnergyInv(WTApi.instance().getInfinityEnergy(((ContainerWT) thisContainer).getWirelessTerminal()), ((EntityPlayerMP) listener).getUniqueID(), false, -1), (EntityPlayerMP) listener);
 					}
 				}
 			}
