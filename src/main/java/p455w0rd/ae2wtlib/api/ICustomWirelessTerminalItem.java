@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
  * @author p455w0rd
  *
  */
-public interface ICustomWirelessTerminalItem extends ICustomWirelessTermHandler {
+public interface ICustomWirelessTerminalItem extends ICustomWirelessTermHandler, IBaubleItem, IModelHolder {
 
 	// checks if an Infinity Booster Card is installed on the WT
 	public default boolean checkForBooster(final ItemStack wirelessTerminal) {

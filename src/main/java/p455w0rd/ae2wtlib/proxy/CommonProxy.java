@@ -1,12 +1,9 @@
 package p455w0rd.ae2wtlib.proxy;
 
 import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import p455w0rd.ae2wtlib.AE2WTLib;
-import p455w0rd.ae2wtlib.init.LibConfig;
-import p455w0rd.ae2wtlib.init.LibNetworking;
+import p455w0rd.ae2wtlib.init.*;
 import p455w0rdslib.util.ChunkUtils;
 
 /**
@@ -26,6 +23,7 @@ public class CommonProxy {
 
 	public void init(FMLInitializationEvent e) {
 		WT_STATE = LoaderState.INITIALIZATION;
+		LibWTRegistry.registerAllTerminalsWithAE2();
 	}
 
 	public void postInit(FMLPostInitializationEvent e) {

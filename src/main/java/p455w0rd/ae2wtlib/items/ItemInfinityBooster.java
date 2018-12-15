@@ -2,19 +2,19 @@ package p455w0rd.ae2wtlib.items;
 
 import java.util.List;
 
-import org.lwjgl.input.Keyboard;
-
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.init.LibConfig;
+import p455w0rd.ae2wtlib.init.LibGlobals;
 
 /**
  * @author p455w0rd
@@ -22,10 +22,8 @@ import p455w0rd.ae2wtlib.init.LibConfig;
  */
 public class ItemInfinityBooster extends ItemBase {
 
-	public static final String name = "infinity_booster_card";
-
 	public ItemInfinityBooster() {
-		super(name);
+		super(new ResourceLocation(LibGlobals.MODID, "infinity_booster_card"));
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -40,11 +38,6 @@ public class ItemInfinityBooster extends ItemBase {
 				list.add(shift);
 			}
 		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static boolean isShiftKeyDown() {
-		return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 	}
 
 }

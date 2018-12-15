@@ -38,6 +38,8 @@ public abstract class WTApi {
 
 	public abstract WTConfig getConfig();
 
+	public abstract WTRegistry getRegistry();
+
 	public abstract List<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player);
 
 	public abstract List<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player, boolean isBauble);
@@ -120,6 +122,8 @@ public abstract class WTApi {
 			public static final String BOOSTER_SLOT_NBT = "BoosterSlot";
 			public static final String IN_RANGE_NBT = "IsInRange";
 			public static final String AUTOCONSUME_BOOSTER_NBT = "AutoConsumeBoosters";
+			public static final String WT_ENCRYPTION_KEY = "encryptionKey";
+			public static final String WT_INTERNAL_POWER = "internalCurrentPower";
 
 		}
 

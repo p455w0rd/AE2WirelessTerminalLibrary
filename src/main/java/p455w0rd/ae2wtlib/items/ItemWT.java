@@ -1,7 +1,11 @@
 package p455w0rd.ae2wtlib.items;
 
+import static p455w0rd.ae2wtlib.api.WTApi.Constants.NBT.WT_ENCRYPTION_KEY;
+import static p455w0rd.ae2wtlib.api.WTApi.Constants.NBT.WT_INTERNAL_POWER;
+
 import org.lwjgl.input.Keyboard;
 
+import appeng.api.AEApi;
 import appeng.api.config.*;
 import appeng.api.util.IConfigManager;
 import appeng.items.tools.powered.powersink.AEBasePoweredItem;
@@ -14,6 +18,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Optional;
@@ -22,28 +27,26 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.api.*;
 import p455w0rd.ae2wtlib.client.render.ItemLayerWrapper;
 import p455w0rd.ae2wtlib.client.render.RenderLayerWT;
-import p455w0rd.ae2wtlib.init.*;
+import p455w0rd.ae2wtlib.init.LibConfig;
+import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
 
 /**
  * @author p455w0rd
  *
  */
-public abstract class ItemWT extends AEBasePoweredItem implements IModelHolder, ICustomWirelessTerminalItem, IBaubleItem {
-
-	public static double GLOBAL_POWER_MULTIPLIER = PowerMultiplier.CONFIG.multiplier;
+public abstract class ItemWT extends AEBasePoweredItem implements ICustomWirelessTerminalItem {
 
 	private EntityPlayer player;
 
 	@SideOnly(Side.CLIENT)
 	ItemLayerWrapper wrappedModel;
 
-	protected ItemWT(String name) {
+	protected ItemWT(ResourceLocation registryName) {
 		super(LibConfig.WT_MAX_POWER);
-		setRegistryName(name);
-		setUnlocalizedName(name);
+		setRegistryName(registryName);
+		setUnlocalizedName(registryName.toString());
 		setMaxStackSize(1);
-		setCreativeTab(LibCreativeTab.CREATIVE_TAB);
 	}
 
 	protected EntityPlayer getPlayer() {
@@ -144,13 +147,17 @@ public abstract class ItemWT extends AEBasePoweredItem implements IModelHolder, 
 	@Override
 	public String getEncryptionKey(final ItemStack item) {
 		final NBTTagCompound tag = Platform.openNbtData(item);
-		return tag.getString("encryptionKey");
+		String key = tag.getString("encryptionKey");
+		if (key != null && key.length() > 0 && AEApi.instance().registries().locatable().getLocatableBy(Long.parseLong(key)) == null) {
+			tag.removeTag(WT_ENCRYPTION_KEY);
+		}
+		return tag.getString(WT_ENCRYPTION_KEY);
 	}
 
 	@Override
 	public void setEncryptionKey(final ItemStack item, final String encKey, final String name) {
 		final NBTTagCompound tag = Platform.openNbtData(item);
-		tag.setString("encryptionKey", encKey);
+		tag.setString(WT_ENCRYPTION_KEY, encKey);
 		tag.setString("name", name);
 	}
 
@@ -182,7 +189,7 @@ public abstract class ItemWT extends AEBasePoweredItem implements IModelHolder, 
 		if (mode == Actionable.MODULATE) {
 			final NBTTagCompound data = Platform.openNbtData(is);
 			final double toAdd = Math.min(amount * 2, required);
-			data.setDouble("internalCurrentPower", currentStorage + toAdd);
+			data.setDouble(WT_INTERNAL_POWER, currentStorage + toAdd);
 		}
 		return Math.max(0, overflow);
 	}
@@ -225,7 +232,7 @@ public abstract class ItemWT extends AEBasePoweredItem implements IModelHolder, 
 		if (LibConfig.USE_OLD_INFINTY_MECHANIC) {
 			return checkForBooster(is);
 		}
-		return WTApi.instance().hasInfiniteRange(is) && !WTApi.instance().isInRange(is) && getEncryptionKey(is) != null && !getEncryptionKey(is).isEmpty();
+		return getEncryptionKey(is) != null && !getEncryptionKey(is).isEmpty() && WTApi.instance().hasInfiniteRange(is) && !WTApi.instance().isInRange(is);
 	}
 
 	@Override

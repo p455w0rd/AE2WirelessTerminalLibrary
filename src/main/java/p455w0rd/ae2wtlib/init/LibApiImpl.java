@@ -42,6 +42,7 @@ public class LibApiImpl extends WTApi {
 
 	private static LibApiImpl INSTANCE = null;
 	private static WTConfigImpl CONFIG = null;
+	private static LibWTRegistry REGISTRY = null;
 
 	public static LibApiImpl instance() {
 		if (LibApiImpl.INSTANCE == null) {
@@ -70,6 +71,17 @@ public class LibApiImpl extends WTApi {
 			CONFIG = new WTConfigImpl();
 		}
 		return CONFIG;
+	}
+
+	@Override
+	public WTRegistry getRegistry() {
+		if (REGISTRY == null) {
+			if (!LibApiImpl.hasFinishedPreInit()) {
+				return null;
+			}
+			REGISTRY = new LibWTRegistry();
+		}
+		return REGISTRY;
 	}
 
 	@Override
