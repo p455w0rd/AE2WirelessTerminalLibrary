@@ -49,8 +49,8 @@ import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
 public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfigurableObject, IConfigManagerHost, IAEAppEngInventory {
 
 	private WTGuiObject<?, ?> obj;
-	private final WTInventoryBooster boosterInventory = new WTInventoryBooster(this);
-	private final AppEngSlot boosterSlot;
+	protected WTInventoryBooster boosterInventory = new WTInventoryBooster(this);
+	protected AppEngSlot boosterSlot;
 	private ItemStack containerstack;
 	private final EntityPlayer player;
 	private int wtSlot = -1;
@@ -80,22 +80,6 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		else {
 			ReflectionHelper.setPrivateValue(AEBaseContainer.class, this, new WTPlayerSource(ip.player, getActionHost(obj)), "mySrc");
 		}
-
-		if (LibConfig.WT_BOOSTER_ENABLED && !WTApi.instance().isWTCreative(getWirelessTerminal())) {
-			if (LibConfig.USE_OLD_INFINTY_MECHANIC) {
-				addSlotToContainer(boosterSlot = new SlotBooster(boosterInventory, 134, -20));
-				boosterSlot.setContainer(this);
-			}
-			else {
-				addSlotToContainer(boosterSlot = new SlotBoosterEnergy(134, -20));
-				boosterSlot.setContainer(this);
-			}
-		}
-		else {
-			addSlotToContainer(boosterSlot = new NullSlot());
-			boosterSlot.setContainer(this);
-		}
-
 	}
 
 	protected void setTerminalHost(ITerminalHost host) {
@@ -188,7 +172,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 	}
 
 	public void readNBT() {
-		if (getWirelessTerminal().hasTagCompound()) {
+		if (boosterInventory != null && getWirelessTerminal().hasTagCompound()) {
 			boosterInventory.readFromNBT(getWirelessTerminal().getTagCompound(), "BoosterSlot");
 		}
 	}
@@ -198,7 +182,9 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 			getWirelessTerminal().setTagCompound(new NBTTagCompound());
 		}
 		NBTTagCompound newNBT = getWirelessTerminal().getTagCompound();
-		newNBT.setTag("BoosterSlot", boosterInventory.serializeNBT());
+		if (boosterInventory != null) {
+			newNBT.setTag("BoosterSlot", boosterInventory.serializeNBT());
+		}
 		getWirelessTerminal().setTagCompound(newNBT);
 		if (Mods.BAUBLES.isLoaded() && isWTBauble()) {
 			Baubles.sync(getPlayerInv().player, getWirelessTerminal(), getWTSlot());
@@ -210,24 +196,6 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		cm.registerSetting(Settings.VIEW_MODE, ViewItems.ALL);
 		cm.registerSetting(Settings.SORT_DIRECTION, SortDir.ASCENDING);
 	}
-
-	/*
-	protected static WTGuiObject<?, ?> getGuiObject(final ItemStack it, final EntityPlayer player, final World w, final int x, final int y, final int z) {
-		//TODO override in WCT/WFT
-
-		if (!it.isEmpty()) {
-			IWirelessTermHandler wh = AEApi.instance().registries().wireless().getWirelessTerminalHandler(it);
-			if (wh instanceof ICustomWirelessTermHandler) {
-				return new WTGuiObject<IAEItemStack>(wh, it, player, w, x, y, z);
-			}
-			if (wh instanceof IWirelessFluidTermHandler) {
-				return new WTGuiObject<IAEFluidStack>(wh, it, player, w, x, y, z);
-			}
-		}
-
-		return null;
-	}
-	*/
 
 	protected void setGuiObject(WTGuiObject<?, ?> guiObject) {
 		obj = guiObject;
@@ -385,7 +353,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 	}
 
 	public AppEngSlot getBoosterSlot() {
-		return boosterSlot instanceof SlotBooster ? boosterSlot : boosterSlot instanceof SlotBoosterEnergy ? boosterSlot : null;
+		return boosterSlot != null && boosterSlot instanceof SlotBooster ? boosterSlot : boosterSlot instanceof SlotBoosterEnergy ? boosterSlot : null;
 	}
 
 	@Override

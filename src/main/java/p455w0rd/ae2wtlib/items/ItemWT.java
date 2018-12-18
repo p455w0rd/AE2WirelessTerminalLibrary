@@ -7,8 +7,11 @@ import org.lwjgl.input.Keyboard;
 
 import appeng.api.AEApi;
 import appeng.api.config.*;
+import appeng.api.networking.IGridHost;
 import appeng.api.util.IConfigManager;
 import appeng.items.tools.powered.powersink.AEBasePoweredItem;
+import appeng.me.helpers.AENetworkProxy;
+import appeng.me.helpers.IGridProxyable;
 import appeng.util.ConfigManager;
 import appeng.util.Platform;
 import baubles.api.BaubleType;
@@ -25,8 +28,10 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.api.*;
+import p455w0rd.ae2wtlib.api.networking.security.WTPlayerSource;
 import p455w0rd.ae2wtlib.client.render.ItemLayerWrapper;
 import p455w0rd.ae2wtlib.client.render.RenderLayerWT;
+import p455w0rd.ae2wtlib.helpers.WTGuiObject;
 import p455w0rd.ae2wtlib.init.LibConfig;
 import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
@@ -152,6 +157,18 @@ public abstract class ItemWT extends AEBasePoweredItem implements ICustomWireles
 			tag.removeTag(WT_ENCRYPTION_KEY);
 		}
 		return tag.getString(WT_ENCRYPTION_KEY);
+	}
+
+	public boolean doesPlayerHaveAccess(EntityPlayer player, ItemStack wirlessTerminal) {
+		WTGuiObject<?, ?> guiObject = WTApi.instance().getGUIObject(wirlessTerminal, player);
+		if (guiObject != null && guiObject.getAccess() != AccessRestriction.NO_ACCESS) {
+			IGridHost host = guiObject.getActionableNode(true).getMachine();
+			if (host instanceof IGridProxyable) {
+				AENetworkProxy aeProxy = ((IGridProxyable) host).getProxy();
+				return Platform.canAccess(aeProxy, new WTPlayerSource(player, guiObject));
+			}
+		}
+		return false;
 	}
 
 	@Override
