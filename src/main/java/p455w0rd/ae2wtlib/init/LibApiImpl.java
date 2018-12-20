@@ -15,7 +15,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.collect.Lists;
 
 import appeng.api.implementations.tiles.IWirelessAccessPoint;
-import baubles.api.cap.BaublesCapabilities;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +31,7 @@ import p455w0rd.ae2wtlib.helpers.WTGuiObject;
 import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.integration.Baubles;
 import p455w0rd.ae2wtlib.items.ItemInfinityBooster;
-import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergyInv;
+import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 
 /**
  * @author p455w0rd
@@ -169,19 +168,17 @@ public class LibApiImpl extends WTApi {
 		if (isBauble) {
 			return Baubles.getWTBySlot(player, slot, type);
 		}
-		if (player.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)) {
-			ItemStack wirelessTerminal = player.inventory.getStackInSlot(slot);
-			Class<?> clazz = wirelessTerminal.getItem().getClass();
-			Class<?>[] interfaces = clazz.getInterfaces();
-			if (interfaces.length <= 0) {
-				// this should only happen for creative versions
-				clazz = clazz.getSuperclass();
-				interfaces = clazz.getInterfaces();
-			}
-			List<Class<?>> applicableInterfaces = Lists.newArrayList(interfaces);
-			if (!wirelessTerminal.isEmpty() && applicableInterfaces.contains(type)) {
-				return wirelessTerminal;
-			}
+		ItemStack wirelessTerminal = player.inventory.getStackInSlot(slot);
+		Class<?> clazz = wirelessTerminal.getItem().getClass();
+		Class<?>[] interfaces = clazz.getInterfaces();
+		if (interfaces.length <= 0) {
+			// this should only happen for creative versions
+			clazz = clazz.getSuperclass();
+			interfaces = clazz.getInterfaces();
+		}
+		List<Class<?>> applicableInterfaces = Lists.newArrayList(interfaces);
+		if (!wirelessTerminal.isEmpty() && applicableInterfaces.contains(type)) {
+			return wirelessTerminal;
 		}
 		return ItemStack.EMPTY;
 	}
@@ -258,9 +255,9 @@ public class LibApiImpl extends WTApi {
 			int spaceAvailable = maxCardCount - currentCardCount;
 			int numberOfCardsTryingToAdd = boosterCardStack.getCount();
 			if (spaceAvailable > 0 && numberOfCardsTryingToAdd > 0) { //can we at least add 1 card?
-				int cardsTryingToAdd = numberOfCardsTryingToAdd * INFINITY_ENERGY_PER_BOOSTER_CARD;
+				int cardsTryingToAdd = numberOfCardsTryingToAdd;
 				if (cardsTryingToAdd <= spaceAvailable) {
-					setInfinityEnergy(wirelessTerm, cardsTryingToAdd + currentCardCount * INFINITY_ENERGY_PER_BOOSTER_CARD);
+					setInfinityEnergy(wirelessTerm, (cardsTryingToAdd * INFINITY_ENERGY_PER_BOOSTER_CARD) + getInfinityEnergy(wirelessTerm));
 					if (cardsTryingToAdd == spaceAvailable) {
 						boosterCardStack = ItemStack.EMPTY;
 					}
@@ -411,7 +408,7 @@ public class LibApiImpl extends WTApi {
 						reducedAmount = 0;
 					}
 					setInfinityEnergy(wirelessTerm, reducedAmount);
-					LibNetworking.instance().sendTo(new PacketSyncInfinityEnergyInv(getInfinityEnergy(wirelessTerm), player.getUniqueID(), isBauble, slot), (EntityPlayerMP) player);
+					LibNetworking.instance().sendTo(new PacketSyncInfinityEnergy(getInfinityEnergy(wirelessTerm), player.getUniqueID(), isBauble, slot), (EntityPlayerMP) player);
 				}
 			}
 		}

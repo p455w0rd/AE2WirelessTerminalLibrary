@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.container.ContainerWT;
 import p455w0rd.ae2wtlib.init.*;
-import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergyInv;
+import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 
 /**
  * @author p455w0rd
@@ -64,7 +64,7 @@ public class SlotBoosterEnergy extends AppEngSlot {
 				c.detectAndSendChanges();
 				for (IContainerListener listener : c.getListeners()) {
 					if (listener instanceof EntityPlayerMP) {
-						LibNetworking.instance().sendTo(new PacketSyncInfinityEnergyInv(WTApi.instance().getInfinityEnergy(((ContainerWT) thisContainer).getWirelessTerminal()), ((EntityPlayerMP) listener).getUniqueID(), false, -1), (EntityPlayerMP) listener);
+						LibNetworking.instance().sendTo(new PacketSyncInfinityEnergy(WTApi.instance().getInfinityEnergy(((ContainerWT) thisContainer).getWirelessTerminal()), ((EntityPlayerMP) listener).getUniqueID(), false, -1), (EntityPlayerMP) listener);
 					}
 				}
 			}

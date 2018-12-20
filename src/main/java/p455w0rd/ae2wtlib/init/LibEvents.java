@@ -34,7 +34,7 @@ import p455w0rd.ae2wtlib.client.render.BaubleRenderDispatcher;
 import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.sync.WTPacket;
 import p455w0rd.ae2wtlib.sync.packets.PacketConfigSync;
-import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergyInv;
+import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
 import p455w0rdslib.capabilities.CapabilityChunkLoader.ProviderTE;
 
@@ -60,10 +60,6 @@ public class LibEvents {
 	@SideOnly(Side.CLIENT)
 	public static void onModelRegister(ModelRegistryEvent event) {
 		LibItems.registerTEISRs(event);
-		//ModItems.WCT.setTileEntityItemStackRenderer(new WTItemRenderer().setModel(ModItems.WCT.getWrappedModel()));
-		//ModItems.CREATIVE_WCT.setTileEntityItemStackRenderer(new WTItemRenderer().setModel(ModItems.WCT.getWrappedModel()));
-		//ModItems.WFT.setTileEntityItemStackRenderer(new WFTItemRenderer());
-		//ModItems.CREATIVE_WFT.setTileEntityItemStackRenderer(new WFTItemRenderer());
 	}
 
 	@SubscribeEvent
@@ -173,7 +169,7 @@ public class LibEvents {
 				ItemStack slotStack = playerInv.getStackInSlot(currentSlot);
 				if (!slotStack.isEmpty() && slotStack.getItem() == LibItems.BOOSTER_CARD) {
 					playerInv.setInventorySlotContents(currentSlot, WTApi.instance().addInfinityBoosters(wirelessTerm, slotStack));
-					LibNetworking.instance().sendToDimension(new PacketSyncInfinityEnergyInv(WTApi.instance().getInfinityEnergy(wirelessTerm), player.getUniqueID(), isBauble, wctSlot), player.getEntityWorld().provider.getDimension());
+					LibNetworking.instance().sendToDimension(new PacketSyncInfinityEnergy(WTApi.instance().getInfinityEnergy(wirelessTerm), player.getUniqueID(), isBauble, wctSlot), player.getEntityWorld().provider.getDimension());
 				}
 			}
 		}

@@ -35,21 +35,21 @@ import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
  * @author p455w0rd
  *
  */
-public class PacketSyncInfinityEnergyInv extends WTPacket {
+public class PacketSyncInfinityEnergy extends WTPacket {
 
 	int infinityEnergy;
 	int slot;
 	boolean isBauble;
 	UUID playerID;
 
-	public PacketSyncInfinityEnergyInv(final ByteBuf stream) {
+	public PacketSyncInfinityEnergy(final ByteBuf stream) {
 		infinityEnergy = stream.readInt();
 		slot = stream.readInt();
 		isBauble = stream.readBoolean();
 		playerID = UUID.fromString(ByteBufUtils.readUTF8String(stream));
 	}
 
-	public PacketSyncInfinityEnergyInv(int energy, UUID playerID, boolean isBauble, int slot) {
+	public PacketSyncInfinityEnergy(int energy, UUID playerID, boolean isBauble, int slot) {
 		infinityEnergy = energy;
 		this.slot = slot;
 		this.isBauble = isBauble;
@@ -83,7 +83,6 @@ public class PacketSyncInfinityEnergyInv extends WTPacket {
 							boolean containerIsBauble = container.isWTBauble();
 							if (slot == containerSlot && isBauble == containerIsBauble) {
 								container.setWirelessTerminal(wirelessTerm);
-								//	gui.setWirelessTerminal(wirelessTerm);
 							}
 						}
 					}

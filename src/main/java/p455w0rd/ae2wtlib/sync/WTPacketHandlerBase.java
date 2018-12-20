@@ -28,7 +28,7 @@ import p455w0rd.ae2wtlib.sync.packets.PacketEmptyTrash;
 import p455w0rd.ae2wtlib.sync.packets.PacketSetAutoConsumeBoosters;
 import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
 import p455w0rd.ae2wtlib.sync.packets.PacketSwapSlots;
-import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergyInv;
+import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 
 public class WTPacketHandlerBase {
 	private static final Map<Class<? extends WTPacket>, PacketTypes> REVERSE_LOOKUP = new HashMap<Class<? extends WTPacket>, WTPacketHandlerBase.PacketTypes>();
@@ -40,7 +40,7 @@ public class WTPacketHandlerBase {
 
 			PACKET_SYNC_CONFIGS(PacketConfigSync.class),
 
-			PACKET_SYNC_INFINITY_ENERGY(PacketSyncInfinityEnergyInv.class),
+			PACKET_SYNC_INFINITY_ENERGY(PacketSyncInfinityEnergy.class),
 
 			PACKET_SET_IN_RANGE(PacketSetInRange.class),
 
