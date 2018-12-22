@@ -6,9 +6,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.PacketThreadUtil;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import p455w0rd.ae2wtlib.sync.PacketCallState;
-import p455w0rd.ae2wtlib.sync.WTPacket;
-import p455w0rd.ae2wtlib.sync.WTPacketHandlerBase;
+import p455w0rd.ae2wtlib.api.networking.*;
 
 public final class WTServerPacketHandler extends WTPacketHandlerBase implements IPacketHandler {
 

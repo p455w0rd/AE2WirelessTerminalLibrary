@@ -1,5 +1,7 @@
 package p455w0rd.ae2wtlib.init;
 
+import java.util.UUID;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -8,12 +10,12 @@ import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientCustomPacketEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerCustomPacketEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import p455w0rd.ae2wtlib.sync.WTPacket;
-import p455w0rd.ae2wtlib.sync.network.IPacketHandler;
-import p455w0rd.ae2wtlib.sync.network.WTClientPacketHandler;
-import p455w0rd.ae2wtlib.sync.network.WTServerPacketHandler;
+import p455w0rd.ae2wtlib.api.WTNetworkHandler;
+import p455w0rd.ae2wtlib.api.networking.WTPacket;
+import p455w0rd.ae2wtlib.sync.network.*;
+import p455w0rd.ae2wtlib.sync.packets.*;
 
-public class LibNetworking {
+public class LibNetworking extends WTNetworkHandler {
 
 	private static final LibNetworking INSTANCE = new LibNetworking();
 	private static final String CHANNEL_NAME = "ae2wtlib";
@@ -54,22 +56,27 @@ public class LibNetworking {
 		return CHANNEL_NAME;
 	}
 
+	@Override
 	public void sendToAll(final WTPacket message) {
 		getEventChannel().sendToAll(message.getProxy());
 	}
 
+	@Override
 	public void sendTo(final WTPacket message, final EntityPlayerMP player) {
 		getEventChannel().sendTo(message.getProxy(), player);
 	}
 
+	@Override
 	public void sendToAllAround(final WTPacket message, final NetworkRegistry.TargetPoint point) {
 		getEventChannel().sendToAllAround(message.getProxy(), point);
 	}
 
+	@Override
 	public void sendToDimension(final WTPacket message, final int dimensionId) {
 		getEventChannel().sendToDimension(message.getProxy(), dimensionId);
 	}
 
+	@Override
 	public void sendToServer(final WTPacket message) {
 		getEventChannel().sendToServer(message.getProxy());
 	}
@@ -83,6 +90,21 @@ public class LibNetworking {
 	@SubscribeEvent
 	public void clientPacket(final ClientCustomPacketEvent ev) {
 		WTClientPacketHandler.instance().onPacketData(null, ev.getHandler(), ev.getPacket(), null);
+	}
+
+	@Override
+	public WTPacket createAutoConsumeBoosterPacket(boolean value) {
+		return new PacketSetAutoConsumeBoosters(value);
+	}
+
+	@Override
+	public WTPacket createEmptyTrashPacket() {
+		return new PacketEmptyTrash();
+	}
+
+	@Override
+	public WTPacket createInfinityEnergySyncPacket(int energy, UUID playerID, boolean isBauble, int slot) {
+		return new PacketSyncInfinityEnergy(energy, playerID, isBauble, slot);
 	}
 
 }

@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.helpers.WTGuiObject;
+import p455w0rd.ae2wtlib.items.ItemInfinityBooster;
 
 public abstract class WTApi {
 
@@ -39,6 +40,10 @@ public abstract class WTApi {
 	public abstract WTConfig getConfig();
 
 	public abstract WTRegistry getRegistry();
+
+	public abstract WTNetworkHandler getNetHandler();
+
+	public abstract ItemInfinityBooster getBoosterCard();
 
 	public abstract List<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player);
 

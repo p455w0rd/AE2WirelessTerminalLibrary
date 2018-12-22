@@ -6,9 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import p455w0rd.ae2wtlib.api.WTApi;
+import p455w0rd.ae2wtlib.api.networking.WTPacket;
 import p455w0rd.ae2wtlib.container.ContainerWT;
 import p455w0rd.ae2wtlib.init.LibConfig;
-import p455w0rd.ae2wtlib.sync.WTPacket;
 import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
 /**

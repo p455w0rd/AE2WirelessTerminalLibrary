@@ -13,7 +13,7 @@
  * You should have received a copy of the MIT License along with Wireless
  * Crafting Terminal. If not, see <https://opensource.org/licenses/MIT>.
  */
-package p455w0rd.ae2wtlib.sync;
+package p455w0rd.ae2wtlib.api.networking;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

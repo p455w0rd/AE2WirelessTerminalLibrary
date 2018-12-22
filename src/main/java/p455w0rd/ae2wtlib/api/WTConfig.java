@@ -10,4 +10,12 @@ public abstract class WTConfig {
 
 	public abstract boolean isOldInfinityMechanicEnabled();
 
+	public abstract int getLowInfinityEnergyWarningAmount();
+
+	public abstract boolean shiftClickBaublesEnabled();
+
+	public abstract int getWTMaxPower();
+
+	public abstract String getConfigFile();
+
 }

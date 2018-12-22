@@ -5,8 +5,8 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import p455w0rd.ae2wtlib.api.networking.WTPacket;
 import p455w0rd.ae2wtlib.integration.Baubles;
-import p455w0rd.ae2wtlib.sync.WTPacket;
 import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
 /**

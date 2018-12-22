@@ -84,6 +84,16 @@ public class LibApiImpl extends WTApi {
 	}
 
 	@Override
+	public WTNetworkHandler getNetHandler() {
+		return LibNetworking.instance();
+	}
+
+	@Override
+	public ItemInfinityBooster getBoosterCard() {
+		return LibItems.BOOSTER_CARD;
+	}
+
+	@Override
 	public List<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player) {
 		return getWirelessTerminals(player, false);
 	}
@@ -465,6 +475,26 @@ public class LibApiImpl extends WTApi {
 		@Override
 		public boolean isOldInfinityMechanicEnabled() {
 			return LibConfig.USE_OLD_INFINTY_MECHANIC;
+		}
+
+		@Override
+		public int getLowInfinityEnergyWarningAmount() {
+			return LibConfig.INFINTY_ENERGY_LOW_WARNING_AMOUNT;
+		}
+
+		@Override
+		public boolean shiftClickBaublesEnabled() {
+			return LibConfig.SHIFT_CLICK_BAUBLES;
+		}
+
+		@Override
+		public int getWTMaxPower() {
+			return LibConfig.WT_MAX_POWER;
+		}
+
+		@Override
+		public String getConfigFile() {
+			return LibGlobals.CONFIG_FILE;
 		}
 
 	}

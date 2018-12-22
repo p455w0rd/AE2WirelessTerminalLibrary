@@ -1,14 +1,13 @@
-package p455w0rd.ae2wtlib.sync;
+package p455w0rd.ae2wtlib.api.networking;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.Packet;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.*;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
+import p455w0rd.ae2wtlib.api.networking.WTPacketHandlerBase.PacketTypes;
 import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
@@ -38,7 +37,7 @@ public abstract class WTPacket implements Packet {
 	public FMLProxyPacket getProxy() {
 		if (p.array().length > 2 * 1024 * 1024) // 2k walking room :)
 		{
-			throw new IllegalArgumentException("Sorry AE2 made a " + p.array().length + " byte packet by accident!");
+			throw new IllegalArgumentException("Sorry AE2WTLib made a " + p.array().length + " byte packet by accident!");
 		}
 
 		final FMLProxyPacket pp = new FMLProxyPacket(p, LibNetworking.instance().getChannel());

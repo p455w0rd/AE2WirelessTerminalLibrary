@@ -25,10 +25,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
 import p455w0rd.ae2wtlib.api.WTApi;
+import p455w0rd.ae2wtlib.api.networking.WTPacket;
 import p455w0rd.ae2wtlib.client.gui.GuiWT;
 import p455w0rd.ae2wtlib.container.ContainerWT;
 import p455w0rd.ae2wtlib.integration.Baubles;
-import p455w0rd.ae2wtlib.sync.WTPacket;
 import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
 /**
