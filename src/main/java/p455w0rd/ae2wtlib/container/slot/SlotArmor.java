@@ -12,14 +12,13 @@ import net.minecraftforge.items.IItemHandler;
 
 public class SlotArmor extends AppEngSlot {
 
-	final EntityEquipmentSlot armorType;
-
+	final EntityEquipmentSlot armorSlot;
 	final EntityPlayer player;
 
-	public SlotArmor(EntityPlayer player, IItemHandler inventory, int slot, int x, int y, EntityEquipmentSlot armorType) {
+	public SlotArmor(EntityPlayer player, IItemHandler inventory, int slot, int x, int y, EntityEquipmentSlot armorSlot) {
 		super(inventory, slot, x, y);
 		this.player = player;
-		this.armorType = armorType;
+		this.armorSlot = armorSlot;
 	}
 
 	@Override
@@ -29,13 +28,13 @@ public class SlotArmor extends AppEngSlot {
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		return !stack.isEmpty() && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.values()[armorType.ordinal() + 1], player);
+		return !stack.isEmpty() && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.values()[armorSlot.ordinal() + 1], player);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public TextureAtlasSprite getBackgroundSprite() {
-		String name = ItemArmor.EMPTY_SLOT_NAMES[armorType.ordinal() - 1];
+		String name = ItemArmor.EMPTY_SLOT_NAMES[armorSlot.ordinal() - 1];
 		return name == null ? null : getBackgroundMap().getAtlasSprite(name);
 	}
 

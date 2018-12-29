@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
-import p455w0rd.ae2wtlib.container.ContainerWT;
+import p455w0rd.ae2wtlib.api.base.ContainerWT;
 
 /**
  * @author p455w0rd

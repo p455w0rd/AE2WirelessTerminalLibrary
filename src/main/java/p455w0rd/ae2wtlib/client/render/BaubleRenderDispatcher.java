@@ -9,8 +9,8 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.item.ItemStack;
-import p455w0rd.ae2wtlib.api.IBaubleItem;
-import p455w0rd.ae2wtlib.api.IBaubleRender;
+import p455w0rd.ae2wtlib.api.client.IBaubleItem;
+import p455w0rd.ae2wtlib.api.client.IBaubleRender;
 
 /**
  * from EnderIO

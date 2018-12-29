@@ -9,12 +9,17 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import appeng.api.implementations.tiles.IWirelessAccessPoint;
+import appeng.container.slot.AppEngSlot;
+import appeng.tile.inventory.AppEngInternalInventory;
+import appeng.util.inv.IAEAppEngInventory;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import p455w0rd.ae2wtlib.helpers.WTGuiObject;
+import net.minecraftforge.items.IItemHandler;
+import p455w0rd.ae2wtlib.api.client.IWTGuiScrollbar;
 import p455w0rd.ae2wtlib.items.ItemInfinityBooster;
 
 public abstract class WTApi {
@@ -42,6 +47,8 @@ public abstract class WTApi {
 	public abstract WTRegistry getRegistry();
 
 	public abstract WTNetworkHandler getNetHandler();
+
+	public abstract WTBaublesAccess getBaublesUtility();
 
 	public abstract ItemInfinityBooster getBoosterCard();
 
@@ -96,9 +103,11 @@ public abstract class WTApi {
 	// Get a list of WAPs on the linked network
 	public abstract List<IWirelessAccessPoint> getWAPs(@Nonnull ItemStack wirelessTerm, @Nonnull EntityPlayer player);
 
-	public abstract WTGuiObject<?, ?> getGUIObject(EntityPlayer player);
+	public abstract WTGuiObject<?> getGUIObject(EntityPlayer player);
 
-	public abstract WTGuiObject<?, ?> getGUIObject(@Nullable ItemStack wirelessTerm, @Nonnull EntityPlayer player);
+	public abstract WTGuiObject<?> getGUIObject(@Nullable ItemStack wirelessTerm, @Nonnull EntityPlayer player);
+
+	public abstract WTGuiObject<?> getGUIObject(ICustomWirelessTermHandler wth, @Nonnull ItemStack wirelessTerm, EntityPlayer player);
 
 	// Set Infinity Energy directly on a Wireless Terminal
 	public abstract void setInfinityEnergy(@Nonnull ItemStack wirelessTerm, int amount);
@@ -112,8 +121,29 @@ public abstract class WTApi {
 	// Is the Wireless Terminal a Creative version?
 	public abstract boolean isWTCreative(ItemStack wirelessTerm);
 
+	// Creates a new instance of the single item (old) Booster Card slot
+	public abstract AppEngSlot createOldBoosterSlot(IItemHandler inventory, int xPos, int yPos);
+
+	// Creates a new instance of the new Infinity Energy version of the Booster Card Slot
+	public abstract AppEngSlot createInfinityBoosterSlot(int posX, int posY);
+
+	// Creates a Null slot which is used in place of the Booster Card slot when the Booster Card is disabled
+	public abstract AppEngSlot createNullSlot();
+
+	// Creates a new instance of an armor-only slot
+	public abstract AppEngSlot createArmorSlot(EntityPlayer player, IItemHandler inventory, int slot, int posX, int posY, EntityEquipmentSlot armorSlot);
+
+	// Creates a new instance of a trash slot
+	public abstract AppEngSlot createTrashSlot(IItemHandler inv, int posX, int posY);
+
+	// Creates a new instance of the Booster Card inventory
+	public abstract AppEngInternalInventory createBoosterInventory(IAEAppEngInventory inventory);
+
 	// Ensures the stack has a NBT Tag Compound
 	public abstract NBTTagCompound ensureTag(ItemStack stack);
+
+	// Creates a new instance of a GUI scrollbar widget
+	public abstract IWTGuiScrollbar createScrollbar();
 
 	// Gets text color via its string name (might remove)
 	@SideOnly(Side.CLIENT)

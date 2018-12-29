@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.api.*;
+import p455w0rd.ae2wtlib.api.client.IBaubleRender;
 import p455w0rd.ae2wtlib.client.render.ItemLayerWrapper;
 import p455w0rd.ae2wtlib.client.render.RenderLayerWT;
 import p455w0rd.ae2wtlib.init.LibConfig;

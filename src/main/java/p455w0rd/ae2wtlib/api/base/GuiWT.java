@@ -1,4 +1,4 @@
-package p455w0rd.ae2wtlib.client.gui;
+package p455w0rd.ae2wtlib.api.base;
 
 import java.io.IOException;
 import java.text.*;
@@ -14,7 +14,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 
-import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.client.gui.widgets.ITooltip;
 import appeng.client.me.*;
@@ -22,36 +21,26 @@ import appeng.container.slot.*;
 import appeng.container.slot.AppEngSlot.hasCalculatedValidness;
 import appeng.core.AEConfig;
 import appeng.core.localization.ButtonToolTips;
-import appeng.fluids.client.render.FluidStackSizeRenderer;
-import appeng.fluids.container.slots.IMEFluidSlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
-import p455w0rd.ae2wtlib.api.WTApi;
-import p455w0rd.ae2wtlib.client.gui.widgets.GuiScrollbar;
-import p455w0rd.ae2wtlib.client.render.StackSizeRenderer;
-import p455w0rd.ae2wtlib.client.render.StackSizeRenderer.ReadableNumberConverter;
-import p455w0rd.ae2wtlib.container.ContainerWT;
+import p455w0rd.ae2wtlib.api.client.IWTGuiScrollbar;
 import p455w0rd.ae2wtlib.container.slot.SlotOutput;
 import p455w0rd.ae2wtlib.container.slot.SlotPlayerHotBar;
-import p455w0rd.ae2wtlib.init.LibConfig;
 import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.integration.JEI;
 
@@ -61,14 +50,13 @@ public abstract class GuiWT extends GuiContainer {
 	public List<InternalSlotME> meSlots = new LinkedList<InternalSlotME>();
 	// drag y
 	protected final Set<Slot> drag_click = new HashSet<Slot>();
-	protected GuiScrollbar scrollBar = null;
+	private IWTGuiScrollbar scrollBar = null;
 	protected boolean disableShiftClick = false;
 	protected Stopwatch dbl_clickTimer = Stopwatch.createStarted();
 	protected ItemStack dbl_whichItem;
 	protected Slot bl_clicked;
 	public boolean subGui;
-	protected final StackSizeRenderer stackSizeRenderer = new StackSizeRenderer();
-	protected final FluidStackSizeRenderer fluidStackSizeRenderer = new FluidStackSizeRenderer();
+	//protected final FluidStackSizeRenderer fluidStackSizeRenderer = new FluidStackSizeRenderer();
 
 	public GuiWT(final Container container) {
 		super(container);
@@ -195,37 +183,13 @@ public abstract class GuiWT extends GuiContainer {
 		final int ox = guiLeft;
 		final int oy = guiTop;
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-		if (scrollBar != null) {
-			scrollBar.draw(this);
+		if (getScrollBar() != null) {
+			getScrollBar().draw(this);
 		}
 		drawFG(ox, oy, xx, yy);
 	}
 
-	public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
-		if (inventorySlots instanceof ContainerWT) {
-			ContainerWT containerWT = (ContainerWT) inventorySlots;
-			String s = "Terminal";
-			mc.fontRenderer.drawString(s, 7, 5, 4210752);
-			String warning = "";
-			if (LibConfig.WT_BOOSTER_ENABLED && !LibConfig.USE_OLD_INFINTY_MECHANIC) {
-				int infinityEnergyAmount = WTApi.instance().getInfinityEnergy(getWirelessTerminal());
-				if (WTApi.instance().hasInfiniteRange(getWirelessTerminal())) {
-					if (!WTApi.instance().isInRangeOfWAP(getWirelessTerminal(), Minecraft.getMinecraft().player)) {
-						if (infinityEnergyAmount < LibConfig.INFINTY_ENERGY_LOW_WARNING_AMOUNT) {
-							warning = TextFormatting.RED + "" + I18n.format("tooltip.infinity_energy_low.desc");
-						}
-					}
-				}
-				if (!WTApi.instance().isWTCreative(getWirelessTerminal()) && isPointInRegion(containerWT.getBoosterSlot().xPos, containerWT.getBoosterSlot().yPos, 16, 16, mouseX, mouseY) && Minecraft.getMinecraft().player.inventory.getItemStack().isEmpty()) {
-					String amountColor = infinityEnergyAmount < LibConfig.INFINTY_ENERGY_LOW_WARNING_AMOUNT ? TextFormatting.RED.toString() : TextFormatting.GREEN.toString();
-					String infinityEnergy = I18n.format("tooltip.infinity_energy.desc") + ": " + amountColor + "" + (isShiftKeyDown() ? infinityEnergyAmount : ReadableNumberConverter.INSTANCE.toSlimReadableForm(infinityEnergyAmount)) + "" + TextFormatting.GRAY + " " + I18n.format("tooltip.units.desc");
-					drawTooltip(mouseX - offsetX, mouseY - offsetY, infinityEnergy);
-				}
-			}
-			mc.fontRenderer.drawString(I18n.format("container.inventory") + " " + warning, 7, ySize - 172 + 3, 4210752);
-		}
-	}
+	public abstract void drawFG(int offsetX, int offsetY, int mouseX, int mouseY);
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(final float f, final int x, final int y) {
@@ -358,6 +322,7 @@ public abstract class GuiWT extends GuiContainer {
 
 	@Override
 	public void drawSlot(final Slot s) {
+		/*
 		if (s instanceof SlotME) {
 			try {
 				zLevel = 100.0F;
@@ -369,12 +334,14 @@ public abstract class GuiWT extends GuiContainer {
 				itemRender.zLevel = 0.0F;
 				//super.drawSlot(new SlotSingleItem(s));
 				super.drawSlot(new Size1Slot((SlotME) s));
-				stackSizeRenderer.renderStackSize(fontRenderer, ((SlotME) s).getAEStack(), s.getStack(), s.xPos, s.yPos);
+				getStackSizeRenderer().renderStackSize(fontRenderer, ((SlotME) s).getAEStack(), s.xPos, s.yPos);
 			}
 			catch (final Exception err) {
 			}
 			return;
 		}
+		*/
+		/* TODO put in WFT
 		else if (s instanceof IMEFluidSlot && ((IMEFluidSlot) s).shouldRenderAsFluid()) {
 			final IMEFluidSlot slot = (IMEFluidSlot) s;
 			final IAEFluidStack fs = slot.getAEFluidStack();
@@ -399,7 +366,7 @@ public abstract class GuiWT extends GuiContainer {
 
 				//if (s instanceof IMEFluidSlot) {
 				//final IMEFluidSlot meFluidSlot = (IMEFluidSlot) s;
-				fluidStackSizeRenderer.renderStackSize(fontRenderer, fs, s.xPos, s.yPos);
+				//fluidStackSizeRenderer.renderStackSize(fontRenderer, fs, s.xPos, s.yPos);
 				//}
 			}
 			else if (!isPowered()) {
@@ -408,82 +375,83 @@ public abstract class GuiWT extends GuiContainer {
 
 			return;
 		}
-		else {
-			try {
-				final ItemStack is = s.getStack();
-				if (s instanceof AppEngSlot && (((AppEngSlot) s).renderIconWithItem() || is.isEmpty()) && (((AppEngSlot) s).shouldDisplay())) {
-					final AppEngSlot aes = (AppEngSlot) s;
-					if (aes.getIcon() >= 0) {
-						this.bindTexture("gui/states.png");
-						final Tessellator tessellator = Tessellator.getInstance();
-						final BufferBuilder vb = tessellator.getBuffer();
+		*/
+		//else {
+		try {
+			final ItemStack is = s.getStack();
+			if (s instanceof AppEngSlot && (((AppEngSlot) s).renderIconWithItem() || is.isEmpty()) && (((AppEngSlot) s).shouldDisplay())) {
+				final AppEngSlot aes = (AppEngSlot) s;
+				if (aes.getIcon() >= 0) {
+					this.bindTexture("gui/states.png");
+					final Tessellator tessellator = Tessellator.getInstance();
+					final BufferBuilder vb = tessellator.getBuffer();
+					try {
+						final int uv_y = (int) Math.floor(aes.getIcon() / 16);
+						final int uv_x = aes.getIcon() - uv_y * 16;
+						GlStateManager.enableBlend();
+						GlStateManager.disableLighting();
+						GlStateManager.enableTexture2D();
+						GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+						GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+						final float par1 = aes.xPos;
+						final float par2 = aes.yPos;
+						final float par3 = uv_x * 16;
+						final float par4 = uv_y * 16;
+						vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+						final float f1 = 0.00390625F;
+						final float f = 0.00390625F;
+						final float par6 = 16;
+						vb.pos(par1 + 0, par2 + par6, zLevel).tex((par3 + 0) * f, (par4 + par6) * f1).color(1.0f, 1.0f, 1.0f, aes.getOpacityOfIcon()).endVertex();
+						final float par5 = 16;
+						vb.pos(par1 + par5, par2 + par6, zLevel).tex((par3 + par5) * f, (par4 + par6) * f1).color(1.0f, 1.0f, 1.0f, aes.getOpacityOfIcon()).endVertex();
+						vb.pos(par1 + par5, par2 + 0, zLevel).tex((par3 + par5) * f, (par4 + 0) * f1).color(1.0f, 1.0f, 1.0f, aes.getOpacityOfIcon()).endVertex();
+						vb.pos(par1 + 0, par2 + 0, zLevel).tex((par3 + 0) * f, (par4 + 0) * f1).color(1.0f, 1.0f, 1.0f, aes.getOpacityOfIcon()).endVertex();
+						tessellator.draw();
+					}
+					catch (final Exception err) {
+					}
+				}
+			}
+
+			if (!is.isEmpty() && s instanceof AppEngSlot) {
+				if (((AppEngSlot) s).getIsValid() == hasCalculatedValidness.NotAvailable) {
+					boolean isValid = s.isItemValid(is) || s instanceof SlotOutput || s instanceof AppEngCraftingSlot || s instanceof SlotPlayerHotBar || s instanceof SlotDisabled || s instanceof SlotInaccessible || s instanceof SlotFake || s instanceof SlotRestrictedInput || s instanceof SlotDisconnected;
+					if (isValid && s instanceof SlotRestrictedInput) {
 						try {
-							final int uv_y = (int) Math.floor(aes.getIcon() / 16);
-							final int uv_x = aes.getIcon() - uv_y * 16;
-							GlStateManager.enableBlend();
-							GlStateManager.disableLighting();
-							GlStateManager.enableTexture2D();
-							GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-							GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-							final float par1 = aes.xPos;
-							final float par2 = aes.yPos;
-							final float par3 = uv_x * 16;
-							final float par4 = uv_y * 16;
-							vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-							final float f1 = 0.00390625F;
-							final float f = 0.00390625F;
-							final float par6 = 16;
-							vb.pos(par1 + 0, par2 + par6, zLevel).tex((par3 + 0) * f, (par4 + par6) * f1).color(1.0f, 1.0f, 1.0f, aes.getOpacityOfIcon()).endVertex();
-							final float par5 = 16;
-							vb.pos(par1 + par5, par2 + par6, zLevel).tex((par3 + par5) * f, (par4 + par6) * f1).color(1.0f, 1.0f, 1.0f, aes.getOpacityOfIcon()).endVertex();
-							vb.pos(par1 + par5, par2 + 0, zLevel).tex((par3 + par5) * f, (par4 + 0) * f1).color(1.0f, 1.0f, 1.0f, aes.getOpacityOfIcon()).endVertex();
-							vb.pos(par1 + 0, par2 + 0, zLevel).tex((par3 + 0) * f, (par4 + 0) * f1).color(1.0f, 1.0f, 1.0f, aes.getOpacityOfIcon()).endVertex();
-							tessellator.draw();
+							isValid = ((SlotRestrictedInput) s).isValid(is, Minecraft.getMinecraft().world);
 						}
 						catch (final Exception err) {
 						}
 					}
+					((AppEngSlot) s).setIsValid(isValid ? hasCalculatedValidness.Valid : hasCalculatedValidness.Invalid);
 				}
 
-				if (!is.isEmpty() && s instanceof AppEngSlot) {
-					if (((AppEngSlot) s).getIsValid() == hasCalculatedValidness.NotAvailable) {
-						boolean isValid = s.isItemValid(is) || s instanceof SlotOutput || s instanceof AppEngCraftingSlot || s instanceof SlotPlayerHotBar || s instanceof SlotDisabled || s instanceof SlotInaccessible || s instanceof SlotFake || s instanceof SlotRestrictedInput || s instanceof SlotDisconnected;
-						if (isValid && s instanceof SlotRestrictedInput) {
-							try {
-								isValid = ((SlotRestrictedInput) s).isValid(is, Minecraft.getMinecraft().world);
-							}
-							catch (final Exception err) {
-							}
-						}
-						((AppEngSlot) s).setIsValid(isValid ? hasCalculatedValidness.Valid : hasCalculatedValidness.Invalid);
-					}
+				if (((AppEngSlot) s).getIsValid() == hasCalculatedValidness.Invalid) {
+					zLevel = 100.0F;
+					itemRender.zLevel = 100.0F;
 
-					if (((AppEngSlot) s).getIsValid() == hasCalculatedValidness.Invalid) {
-						zLevel = 100.0F;
-						itemRender.zLevel = 100.0F;
+					GL11.glDisable(GL11.GL_LIGHTING);
+					drawRect(s.xPos, s.yPos, 16 + s.xPos, 16 + s.yPos, 0x66ff6666);
+					GL11.glEnable(GL11.GL_LIGHTING);
 
-						GL11.glDisable(GL11.GL_LIGHTING);
-						drawRect(s.xPos, s.yPos, 16 + s.xPos, 16 + s.yPos, 0x66ff6666);
-						GL11.glEnable(GL11.GL_LIGHTING);
-
-						zLevel = 0.0F;
-						itemRender.zLevel = 0.0F;
-					}
+					zLevel = 0.0F;
+					itemRender.zLevel = 0.0F;
 				}
-
-				if (s instanceof AppEngSlot) {
-					((AppEngSlot) s).setDisplay(true);
-					super.drawSlot(s);
-				}
-				else {
-					super.drawSlot(s);
-				}
-
-				return;
 			}
-			catch (final Exception err) {
+
+			if (s instanceof AppEngSlot) {
+				((AppEngSlot) s).setDisplay(true);
+				super.drawSlot(s);
 			}
+			else {
+				super.drawSlot(s);
+			}
+
+			return;
 		}
+		catch (final Exception err) {
+		}
+		//}
 		// do the usual for non-ME Slots.
 		super.drawSlot(s);
 	}
@@ -539,12 +507,12 @@ public abstract class GuiWT extends GuiContainer {
 		mc.getTextureManager().bindTexture(loc);
 	}
 
-	protected GuiScrollbar getScrollBar() {
+	protected IWTGuiScrollbar getScrollBar() {
 		return scrollBar;
 	}
 
-	protected void setScrollBar(final GuiScrollbar myScrollBar) {
-		scrollBar = myScrollBar;
+	protected void setScrollBar(final IWTGuiScrollbar scrollBar) {
+		this.scrollBar = scrollBar;
 	}
 
 	protected List<InternalSlotME> getMeSlots() {
@@ -568,7 +536,7 @@ public abstract class GuiWT extends GuiContainer {
 		}
 	}
 
-	class Size1Slot extends SlotItemHandler {
+	public static class Size1Slot extends SlotItemHandler {
 
 		private final SlotItemHandler delegate;
 

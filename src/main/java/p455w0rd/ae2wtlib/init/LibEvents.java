@@ -10,10 +10,12 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.player.*;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -147,7 +149,7 @@ public class LibEvents {
 		if (!(player instanceof EntityPlayerMP)) {
 			return;
 		}
-		InventoryPlayer playerInv = player.inventory;
+		NonNullList<ItemStack> playerInv = player.inventory.mainInventory;
 		List<Pair<Boolean, Pair<Integer, ItemStack>>> terminals = WTApi.instance().getAllWirelessTerminals(player);
 		ItemStack wirelessTerm = ItemStack.EMPTY;
 		boolean isBauble = false;
@@ -160,15 +162,15 @@ public class LibEvents {
 				break;
 			}
 		}
-		int invSize = playerInv.getSizeInventory();
+		int invSize = playerInv.size();
 		if (invSize <= 0) {
 			return;
 		}
 		if (!LibConfig.USE_OLD_INFINTY_MECHANIC && !wirelessTerm.isEmpty() && WTApi.instance().shouldConsumeBoosters(wirelessTerm)) {
 			for (int currentSlot = 0; currentSlot < invSize; currentSlot++) {
-				ItemStack slotStack = playerInv.getStackInSlot(currentSlot);
+				ItemStack slotStack = playerInv.get(currentSlot);
 				if (!slotStack.isEmpty() && slotStack.getItem() == LibItems.BOOSTER_CARD) {
-					playerInv.setInventorySlotContents(currentSlot, WTApi.instance().addInfinityBoosters(wirelessTerm, slotStack));
+					playerInv.set(currentSlot, WTApi.instance().addInfinityBoosters(wirelessTerm, slotStack));
 					LibNetworking.instance().sendToDimension(new PacketSyncInfinityEnergy(WTApi.instance().getInfinityEnergy(wirelessTerm), player.getUniqueID(), isBauble, wctSlot), player.getEntityWorld().provider.getDimension());
 				}
 			}

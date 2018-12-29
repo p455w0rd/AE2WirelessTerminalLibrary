@@ -1,4 +1,4 @@
-package p455w0rd.ae2wtlib.container;
+package p455w0rd.ae2wtlib.api.base;
 
 import java.util.*;
 
@@ -38,18 +38,17 @@ import p455w0rd.ae2wtlib.api.*;
 import p455w0rd.ae2wtlib.api.networking.security.WTIActionHost;
 import p455w0rd.ae2wtlib.api.networking.security.WTPlayerSource;
 import p455w0rd.ae2wtlib.container.slot.*;
-import p455w0rd.ae2wtlib.helpers.WTGuiObject;
+import p455w0rd.ae2wtlib.helpers.WTGuiObjectImpl;
 import p455w0rd.ae2wtlib.init.LibConfig;
 import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.init.LibNetworking;
-import p455w0rd.ae2wtlib.integration.Baubles;
 import p455w0rd.ae2wtlib.inventory.WTInventoryBooster;
 import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
 
 public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfigurableObject, IConfigManagerHost, IAEAppEngInventory {
 
-	private WTGuiObject<?, ?> obj;
-	protected WTInventoryBooster boosterInventory = new WTInventoryBooster(this);
+	private WTGuiObject<?> obj;
+	private WTInventoryBooster boosterInventory = new WTInventoryBooster(this);
 	protected AppEngSlot boosterSlot;
 	private ItemStack containerstack;
 	private final EntityPlayer player;
@@ -72,14 +71,18 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		player = ip.player;
 		this.wtSlot = wtSlot;
 		this.isBauble = isBauble;
-		containerstack = isBauble ? Baubles.getWTBySlot(player, wtSlot, ICustomWirelessTerminalItem.class) : WTApi.instance().getWTBySlot(player, wtSlot);
-		obj = anchor instanceof WTGuiObject ? (WTGuiObject<?, ?>) anchor : null;
+		containerstack = isBauble ? WTApi.instance().getBaublesUtility().getWTBySlot(player, wtSlot, ICustomWirelessTerminalItem.class) : WTApi.instance().getWTBySlot(player, wtSlot);
+		obj = anchor instanceof WTGuiObject ? (WTGuiObject<?>) anchor : null;
 		if (obj == null) {
 			setValidContainer(false);
 		}
 		else {
 			ReflectionHelper.setPrivateValue(AEBaseContainer.class, this, new WTPlayerSource(ip.player, getActionHost(obj)), "mySrc");
 		}
+	}
+
+	protected WTInventoryBooster getBoosterInventory() {
+		return boosterInventory;
 	}
 
 	protected void setTerminalHost(ITerminalHost host) {
@@ -187,7 +190,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		}
 		getWirelessTerminal().setTagCompound(newNBT);
 		if (Mods.BAUBLES.isLoaded() && isWTBauble()) {
-			Baubles.sync(getPlayerInv().player, getWirelessTerminal(), getWTSlot());
+			WTApi.instance().getBaublesUtility().sync(getPlayerInv().player, getWirelessTerminal(), getWTSlot());
 		}
 	}
 
@@ -197,11 +200,11 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		cm.registerSetting(Settings.SORT_DIRECTION, SortDir.ASCENDING);
 	}
 
-	protected void setGuiObject(WTGuiObject<?, ?> guiObject) {
+	protected void setGuiObject(WTGuiObject<?> guiObject) {
 		obj = guiObject;
 	}
 
-	public WTGuiObject<?, ?> getGuiObject() {
+	public WTGuiObject<?> getGuiObject() {
 		return obj;
 	}
 
@@ -217,7 +220,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		//TODO be sure to override in extending container
 		/*
 		if (Platform.isClient()) {
-
+		
 			if (stack == null && getTargetStack() == null) {
 				return;
 			}
@@ -304,7 +307,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 	public boolean isInVanillaWAPRange() {
 		if (getGuiObject() == null) {
 			BlockPos playerPos = getPlayerInv().player.getPosition();
-			setGuiObject(new WTGuiObject<IAEItemStack, IItemStorageChannel>((IWirelessTermHandler) getWirelessTerminal().getItem(), getWirelessTerminal(), getPlayerInv().player, getPlayerInv().player.getEntityWorld(), playerPos.getX(), playerPos.getY(), playerPos.getZ()));
+			setGuiObject(new WTGuiObjectImpl<IAEItemStack, IItemStorageChannel>((IWirelessTermHandler) getWirelessTerminal().getItem(), getWirelessTerminal(), getPlayerInv().player, getPlayerInv().player.getEntityWorld(), playerPos.getX(), playerPos.getY(), playerPos.getZ()));
 		}
 		if (getGuiObject().getWAP() != null) {
 			double wapRange = getGuiObject().getWAP().getRange();
@@ -363,19 +366,15 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 			if (isInRange()) {
 				obj.extractAEPower(AEConfig.instance().wireless_getDrainRate(obj.getRange()), Actionable.MODULATE, PowerMultiplier.CONFIG);
 				if (!LibConfig.USE_OLD_INFINTY_MECHANIC) {
-					//if (!WCTUtils.isInRange(getWirelessTerminal())) {
 					WTApi.instance().setInRange(getWirelessTerminal(), true);
 					LibNetworking.instance().sendTo(new PacketSetInRange(true), (EntityPlayerMP) getPlayerInv().player);
-					//}
 				}
 			}
 			else {
 				obj.extractAEPower((int) (Math.min(500.0, AEConfig.instance().wireless_getDrainRate(obj.getRange()))), Actionable.MODULATE, PowerMultiplier.CONFIG);
 				if (!LibConfig.USE_OLD_INFINTY_MECHANIC) {
-					//if (WCTUtils.isInRange(getWirelessTerminal())) {
 					WTApi.instance().setInRange(getWirelessTerminal(), false);
 					LibNetworking.instance().sendTo(new PacketSetInRange(false), (EntityPlayerMP) getPlayerInv().player);
-					//}
 					WTApi.instance().drainInfinityEnergy(getWirelessTerminal(), getPlayerInv().player, isBauble, wtSlot);
 				}
 			}

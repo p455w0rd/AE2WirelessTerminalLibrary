@@ -1,10 +1,10 @@
 package p455w0rd.ae2wtlib.client.gui.widgets;
 
-import appeng.client.gui.widgets.IScrollSource;
 import net.minecraft.client.renderer.GlStateManager;
-import p455w0rd.ae2wtlib.client.gui.GuiWT;
+import p455w0rd.ae2wtlib.api.base.GuiWT;
+import p455w0rd.ae2wtlib.api.client.IWTGuiScrollbar;
 
-public class GuiScrollbar implements IScrollSource {
+public class GuiScrollbar implements IWTGuiScrollbar {
 
 	private int displayX = 0;
 	private int displayY = 0;
@@ -16,6 +16,7 @@ public class GuiScrollbar implements IScrollSource {
 	private int minScroll = 0;
 	private int currentScroll = 0;
 
+	@Override
 	public void draw(final GuiWT g) {
 		g.bindTexture("minecraft", "gui/container/creative_inventory/tabs.png");
 		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);

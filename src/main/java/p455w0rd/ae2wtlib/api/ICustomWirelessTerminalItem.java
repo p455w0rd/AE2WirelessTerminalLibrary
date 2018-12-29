@@ -1,6 +1,8 @@
 package p455w0rd.ae2wtlib.api;
 
 import net.minecraft.item.ItemStack;
+import p455w0rd.ae2wtlib.api.client.IBaubleItem;
+import p455w0rd.ae2wtlib.api.client.IModelHolder;
 
 /**
  * @author p455w0rd

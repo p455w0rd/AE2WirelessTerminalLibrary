@@ -5,7 +5,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.items.IItemHandler;
 import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
-import p455w0rd.ae2wtlib.integration.Baubles;
 
 public class SlotPlayerHotBar extends AppEngSlot {
 
@@ -21,7 +20,7 @@ public class SlotPlayerHotBar extends AppEngSlot {
 	@Override
 	public boolean canTakeStack(final EntityPlayer player) {
 		if (Mods.BAUBLES.isLoaded()) {
-			if (!Baubles.getFirstWTBauble(player).getRight().isEmpty()) {
+			if (!WTApi.instance().getBaublesUtility().getFirstWTBauble(player).getRight().isEmpty()) {
 				return true;
 			}
 			if (!getStack().isEmpty() && WTApi.instance().isAnyWT(getStack())) {

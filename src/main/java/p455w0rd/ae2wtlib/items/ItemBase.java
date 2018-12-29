@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import p455w0rd.ae2wtlib.api.IModelHolder;
+import p455w0rd.ae2wtlib.api.client.IModelHolder;
 import p455w0rd.ae2wtlib.init.LibCreativeTab;
 
 /**

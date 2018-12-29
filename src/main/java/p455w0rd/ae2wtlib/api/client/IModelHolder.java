@@ -1,4 +1,4 @@
-package p455w0rd.ae2wtlib.api;
+package p455w0rd.ae2wtlib.api.client;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import p455w0rd.ae2wtlib.client.render.ItemLayerWrapper;

@@ -8,25 +8,21 @@ import appeng.api.AEApi;
 import appeng.api.config.*;
 import appeng.api.features.ILocatable;
 import appeng.api.features.IWirelessTermHandler;
-import appeng.api.implementations.guiobjects.IGuiItemObject;
 import appeng.api.implementations.tiles.IWirelessAccessPoint;
 import appeng.api.networking.*;
-import appeng.api.networking.energy.IEnergySource;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.*;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 import appeng.api.util.*;
-import appeng.container.interfaces.IInventorySlotAware;
 import appeng.tile.networking.TileWireless;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import p455w0rd.ae2wtlib.api.*;
-import p455w0rd.ae2wtlib.api.networking.security.WTIActionHost;
 
-public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> implements ITerminalHost, IMEMonitor<O>, IEnergySource, IGuiItemObject, IInventorySlotAware, WTIActionHost {
+public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>> extends WTGuiObject<O> {
 
 	private final ItemStack effectiveItem;
 	private final IWirelessTermHandler wth;
@@ -41,7 +37,7 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 	private final int inventorySlot;
 
 	@SuppressWarnings("unchecked")
-	public WTGuiObject(final IWirelessTermHandler wh, final ItemStack is, final EntityPlayer ep, final World w, final int x, final int y, final int z) {
+	public WTGuiObjectImpl(final IWirelessTermHandler wh, final ItemStack is, final EntityPlayer ep, final World w, final int x, final int y, final int z) {
 		encryptionKey = wh.getEncryptionKey(is);
 		effectiveItem = is;
 		myPlayer = ep;
@@ -73,6 +69,7 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 		}
 	}
 
+	@Override
 	public List<IWirelessAccessPoint> getWAPs() {
 		List<IWirelessAccessPoint> wapList = Lists.newArrayList();
 		if (targetGrid != null) {
@@ -87,6 +84,7 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 		return wapList;
 	}
 
+	@Override
 	public IWirelessAccessPoint getWAP() {
 		if (myWap == null) {
 			if (targetGrid != null) {
@@ -102,10 +100,12 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 		return myWap;
 	}
 
+	@Override
 	public IGrid getTargetGrid() {
 		return targetGrid;
 	}
 
+	@Override
 	public double getRange() {
 		return myRange;
 	}
@@ -246,10 +246,12 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 		return wth.getConfigManager(effectiveItem);
 	}
 
+	@Override
 	public IGridNode getGridNode(final AEPartLocation dir) {
 		return this.getActionableNode();
 	}
 
+	@Override
 	public AECableType getCableConnectionType(final AEPartLocation dir) {
 		return AECableType.NONE;
 	}
@@ -292,10 +294,12 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 		return null;
 	}
 
+	@Override
 	public boolean rangeCheck() {
 		return rangeCheck(false);
 	}
 
+	@Override
 	public boolean rangeCheck(boolean ignoreRange) {
 		sqRange = myRange = Double.MAX_VALUE;
 
@@ -325,10 +329,12 @@ public class WTGuiObject<O extends IAEStack<O>, C extends IStorageChannel<O>> im
 		return false;
 	}
 
+	@Override
 	public boolean testWap(final IWirelessAccessPoint wap) {
 		return testWap(wap, false);
 	}
 
+	@Override
 	public boolean testWap(final IWirelessAccessPoint wap, boolean ignoreRange) {
 		double rangeLimit = wap.getRange();
 		rangeLimit *= rangeLimit;

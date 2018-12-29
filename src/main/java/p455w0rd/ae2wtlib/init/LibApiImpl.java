@@ -15,21 +15,32 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.collect.Lists;
 
 import appeng.api.implementations.tiles.IWirelessAccessPoint;
-import net.minecraft.entity.player.*;
+import appeng.container.slot.AppEngSlot;
+import appeng.tile.inventory.AppEngInternalInventory;
+import appeng.util.inv.IAEAppEngInventory;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
 import p455w0rd.ae2wtlib.AE2WTLib;
 import p455w0rd.ae2wtlib.api.*;
-import p455w0rd.ae2wtlib.container.ContainerWT;
-import p455w0rd.ae2wtlib.helpers.WTGuiObject;
+import p455w0rd.ae2wtlib.api.base.ContainerWT;
+import p455w0rd.ae2wtlib.api.client.IWTGuiScrollbar;
+import p455w0rd.ae2wtlib.client.gui.widgets.GuiScrollbar;
+import p455w0rd.ae2wtlib.container.slot.*;
+import p455w0rd.ae2wtlib.helpers.WTGuiObjectImpl;
 import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.integration.Baubles;
+import p455w0rd.ae2wtlib.inventory.WTInventoryBooster;
 import p455w0rd.ae2wtlib.items.ItemInfinityBooster;
 import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 
@@ -42,6 +53,7 @@ public class LibApiImpl extends WTApi {
 	private static LibApiImpl INSTANCE = null;
 	private static WTConfigImpl CONFIG = null;
 	private static LibWTRegistry REGISTRY = null;
+	private static WTBaublesAccess BAUBLES = null;
 
 	public static LibApiImpl instance() {
 		if (LibApiImpl.INSTANCE == null) {
@@ -84,6 +96,17 @@ public class LibApiImpl extends WTApi {
 	}
 
 	@Override
+	public WTBaublesAccess getBaublesUtility() {
+		if (BAUBLES == null) {
+			if (!LibApiImpl.hasFinishedPreInit()) {
+				return null;
+			}
+			BAUBLES = new Baubles();
+		}
+		return BAUBLES;
+	}
+
+	@Override
 	public WTNetworkHandler getNetHandler() {
 		return LibNetworking.instance();
 	}
@@ -101,18 +124,18 @@ public class LibApiImpl extends WTApi {
 	@Override
 	public List<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player, boolean isBauble) {
 		if (isBauble) {
-			return Baubles.getAllWTBaubles(player);
+			return getBaublesUtility().getAllWTBaubles(player);
 		}
 		List<Pair<Integer, ItemStack>> terminalList = Lists.newArrayList();
-		InventoryPlayer playerInventory = player.inventory;
-		for (int i = 0; i < playerInventory.getSizeInventory(); i++) {
-			ItemStack wirelessTerm = playerInventory.getStackInSlot(i);
+		NonNullList<ItemStack> playerInventory = player.inventory.mainInventory;
+		for (int i = 0; i < playerInventory.size(); i++) {
+			ItemStack wirelessTerm = playerInventory.get(i);
 			if (isAnyWT(wirelessTerm)) {
 				terminalList.add(Pair.of(i, wirelessTerm));
 			}
 		}
 		if (Mods.BAUBLES.isLoaded()) {
-			List<Pair<Integer, ItemStack>> wtBaubles = Baubles.getAllWTBaubles(player);
+			List<Pair<Integer, ItemStack>> wtBaubles = getBaublesUtility().getAllWTBaubles(player);
 			if (!wtBaubles.isEmpty()) {
 				terminalList.addAll(wtBaubles);
 			}
@@ -125,15 +148,15 @@ public class LibApiImpl extends WTApi {
 	@Override
 	public List<Pair<Boolean, Pair<Integer, ItemStack>>> getAllWirelessTerminals(EntityPlayer player) {
 		List<Pair<Boolean, Pair<Integer, ItemStack>>> terminalList = Lists.newArrayList();
-		InventoryPlayer inventory = player.inventory;
-		for (int i = 0; i < inventory.getSizeInventory(); i++) {
-			ItemStack wirelessTerm = inventory.getStackInSlot(i);
+		NonNullList<ItemStack> playerInventory = player.inventory.mainInventory;
+		for (int i = 0; i < playerInventory.size(); i++) {
+			ItemStack wirelessTerm = playerInventory.get(i);
 			if (isAnyWT(wirelessTerm)) {
 				terminalList.add(Pair.of(false, Pair.of(i, wirelessTerm)));
 			}
 		}
 		if (Mods.BAUBLES.isLoaded()) {
-			List<Pair<Integer, ItemStack>> wctBaubles = Baubles.getAllWTBaubles(player);
+			List<Pair<Integer, ItemStack>> wctBaubles = getBaublesUtility().getAllWTBaubles(player);
 			if (!wctBaubles.isEmpty()) {
 				for (int i = 0; i < wctBaubles.size(); i++) {
 					ItemStack wctBauble = wctBaubles.get(i).getRight();
@@ -176,26 +199,28 @@ public class LibApiImpl extends WTApi {
 	@Override
 	public ItemStack getWTBySlot(EntityPlayer player, boolean isBauble, int slot, Class<? extends ICustomWirelessTerminalItem> type) {
 		if (isBauble) {
-			return Baubles.getWTBySlot(player, slot, type);
+			return getBaublesUtility().getWTBySlot(player, slot, type);
 		}
-		ItemStack wirelessTerminal = player.inventory.getStackInSlot(slot);
-		Class<?> clazz = wirelessTerminal.getItem().getClass();
-		Class<?>[] interfaces = clazz.getInterfaces();
-		if (interfaces.length <= 0) {
-			// this should only happen for creative versions
-			clazz = clazz.getSuperclass();
-			interfaces = clazz.getInterfaces();
-		}
-		List<Class<?>> applicableInterfaces = Lists.newArrayList(interfaces);
-		if (!wirelessTerminal.isEmpty() && applicableInterfaces.contains(type)) {
-			return wirelessTerminal;
+		ItemStack wirelessTerminal = player.inventory.mainInventory.get(slot);
+		if (!wirelessTerminal.isEmpty()) {
+			Class<?> clazz = wirelessTerminal.getItem().getClass();
+			Class<?>[] interfaces = clazz.getInterfaces();
+			if (interfaces.length <= 0) {
+				// this should only happen for creative versions
+				clazz = clazz.getSuperclass();
+				interfaces = clazz.getInterfaces();
+			}
+			List<Class<?>> applicableInterfaces = Lists.newArrayList(interfaces);
+			if (!wirelessTerminal.isEmpty() && applicableInterfaces.contains(type)) {
+				return wirelessTerminal;
+			}
 		}
 		return ItemStack.EMPTY;
 	}
 
 	@Override
 	public ItemStack getWTBySlot(EntityPlayer player, int slot) {
-		ItemStack wirelessTerminal = player.inventory.getStackInSlot(slot);
+		ItemStack wirelessTerminal = player.inventory.mainInventory.get(slot);
 		if (!wirelessTerminal.isEmpty() && wirelessTerminal.getItem() instanceof ICustomWirelessTerminalItem) {
 			return wirelessTerminal;
 		}
@@ -355,7 +380,7 @@ public class LibApiImpl extends WTApi {
 	@Override
 	public List<IWirelessAccessPoint> getWAPs(@Nonnull ItemStack wirelessTerm, @Nonnull EntityPlayer player) {
 		if (isAnyWT(wirelessTerm)) {
-			WTGuiObject<?, ?> object = getGUIObject(wirelessTerm, player);
+			WTGuiObject<?> object = getGUIObject(wirelessTerm, player);
 			if (object != null) {
 				return object.getWAPs();
 			}
@@ -364,12 +389,12 @@ public class LibApiImpl extends WTApi {
 	}
 
 	@Override
-	public WTGuiObject<?, ?> getGUIObject(EntityPlayer player) {
+	public WTGuiObject<?> getGUIObject(EntityPlayer player) {
 		return getGUIObject(null, player);
 	}
 
 	@Override
-	public WTGuiObject<?, ?> getGUIObject(@Nullable ItemStack wirelessTerm, @Nonnull EntityPlayer player) {
+	public WTGuiObject<?> getGUIObject(@Nullable ItemStack wirelessTerm, @Nonnull EntityPlayer player) {
 		if (wirelessTerm == null) {
 			if (player.openContainer instanceof ContainerWT) {
 				ContainerWT c = (ContainerWT) player.openContainer;
@@ -382,11 +407,16 @@ public class LibApiImpl extends WTApi {
 			if (wirelessTerm.getItem() instanceof ICustomWirelessTermHandler) {
 				if (player != null && player.getEntityWorld() != null) {
 					ICustomWirelessTermHandler wth = (ICustomWirelessTermHandler) wirelessTerm.getItem();
-					return new WTGuiObject<>(wth, wirelessTerm, player, player.getEntityWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
+					return getGUIObject(wth, wirelessTerm, player);
 				}
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public WTGuiObject<?> getGUIObject(ICustomWirelessTermHandler wth, @Nonnull ItemStack wirelessTerm, EntityPlayer player) {
+		return new WTGuiObjectImpl<>(wth, wirelessTerm, player, player.getEntityWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
 	}
 
 	@Override
@@ -497,6 +527,41 @@ public class LibApiImpl extends WTApi {
 			return LibGlobals.CONFIG_FILE;
 		}
 
+	}
+
+	@Override
+	public AppEngSlot createOldBoosterSlot(IItemHandler inventory, int xPos, int yPos) {
+		return new SlotBooster(inventory, xPos, yPos);
+	}
+
+	@Override
+	public AppEngInternalInventory createBoosterInventory(IAEAppEngInventory inventory) {
+		return new WTInventoryBooster(inventory);
+	}
+
+	@Override
+	public AppEngSlot createInfinityBoosterSlot(int posX, int posY) {
+		return new SlotBoosterEnergy(posX, posY);
+	}
+
+	@Override
+	public AppEngSlot createNullSlot() {
+		return new NullSlot();
+	}
+
+	@Override
+	public AppEngSlot createArmorSlot(EntityPlayer player, IItemHandler inventory, int slot, int posX, int posY, EntityEquipmentSlot armorSlot) {
+		return new SlotArmor(player, inventory, slot, posX, posY, armorSlot);
+	}
+
+	@Override
+	public AppEngSlot createTrashSlot(IItemHandler inventory, int posX, int posY) {
+		return new SlotTrash(inventory, posX, posY);
+	}
+
+	@Override
+	public IWTGuiScrollbar createScrollbar() {
+		return new GuiScrollbar();
 	}
 
 }

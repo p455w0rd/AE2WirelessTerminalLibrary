@@ -25,10 +25,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
 import p455w0rd.ae2wtlib.api.WTApi;
+import p455w0rd.ae2wtlib.api.base.ContainerWT;
+import p455w0rd.ae2wtlib.api.base.GuiWT;
 import p455w0rd.ae2wtlib.api.networking.WTPacket;
-import p455w0rd.ae2wtlib.client.gui.GuiWT;
-import p455w0rd.ae2wtlib.container.ContainerWT;
-import p455w0rd.ae2wtlib.integration.Baubles;
 import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
 /**
@@ -72,7 +71,7 @@ public class PacketSyncInfinityEnergy extends WTPacket {
 		if (slot >= 0 && player.getEntityWorld() != null) {
 			EntityPlayer targetPlayer = player.getEntityWorld().getPlayerEntityByUUID(playerID);
 			if (targetPlayer != null) {
-				ItemStack wirelessTerm = isBauble ? Baubles.getWTBySlot(targetPlayer, slot, ICustomWirelessTerminalItem.class) : WTApi.instance().getWTBySlot(targetPlayer, slot);
+				ItemStack wirelessTerm = isBauble ? WTApi.instance().getBaublesUtility().getWTBySlot(targetPlayer, slot, ICustomWirelessTerminalItem.class) : WTApi.instance().getWTBySlot(targetPlayer, slot);
 				if (!wirelessTerm.isEmpty()) {
 					WTApi.instance().setInfinityEnergy(wirelessTerm, infinityEnergy);
 					if (playerID.equals(player.getUniqueID())) {

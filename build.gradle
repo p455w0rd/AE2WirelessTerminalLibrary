@@ -38,7 +38,7 @@ repositories {
 }
 dependencies {
 	//compile project(':appliedenergistics2')
-	deobfCompile "appeng:appliedenergistics2:rv6-stable-4"
+	deobfCompile "appeng:appliedenergistics2:rv6-stable-6"
 	deobfCompile "cofh:RedstoneFlux:1.12-2.0.2.4:universal"
 	deobfCompile "mezz.jei:jei_1.12.2:+"
 	deobfCompile "p455w0rd:p455w0rdslib:1.12.2-2.0.36"

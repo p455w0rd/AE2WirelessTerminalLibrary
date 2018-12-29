@@ -22,10 +22,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
+import p455w0rd.ae2wtlib.api.IBoosterSlot;
 import p455w0rd.ae2wtlib.init.LibGlobals;
 import p455w0rd.ae2wtlib.init.LibItems;
 
-public class SlotBooster extends AppEngSlot {
+public class SlotBooster extends AppEngSlot implements IBoosterSlot {
 
 	public SlotBooster(IItemHandler inv, int xPos, int yPos) {
 		super(inv, 0, xPos, yPos);

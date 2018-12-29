@@ -1,4 +1,4 @@
-package p455w0rd.ae2wtlib.api;
+package p455w0rd.ae2wtlib.api.client;
 
 import baubles.api.IBauble;
 
