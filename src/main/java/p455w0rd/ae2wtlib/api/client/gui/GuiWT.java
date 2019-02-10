@@ -534,12 +534,7 @@ public abstract class GuiWT extends GuiContainer {
 	}
 
 	public static boolean isTabKeyDown() {
-		if (Minecraft.IS_RUNNING_ON_MAC) {
-			return Keyboard.isKeyDown(48);
-		}
-		else {
-			return Keyboard.isKeyDown(15);
-		}
+		return Keyboard.isKeyDown(15);
 	}
 
 	public static class Size1Slot extends SlotItemHandler {
