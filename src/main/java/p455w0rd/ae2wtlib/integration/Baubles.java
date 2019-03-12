@@ -1,10 +1,13 @@
 package p455w0rd.ae2wtlib.integration;
 
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
@@ -30,14 +33,14 @@ public class Baubles extends WTBaublesAccess {
 	@Override
 	public Pair<Integer, ItemStack> getFirstWTBauble(EntityPlayer player) {
 		if (!getAllWTBaubles(player).isEmpty()) {
-			return getAllWTBaubles(player).get(0);
+			return getAllWTBaubles(player).stream().findFirst().get();
 		}
 		return Pair.of(-1, ItemStack.EMPTY);
 	}
 
 	@Override
-	public List<Pair<Integer, ItemStack>> getAllWTBaubles(EntityPlayer player) {
-		List<Pair<Integer, ItemStack>> list = Lists.newArrayList();
+	public Set<Pair<Integer, ItemStack>> getAllWTBaubles(EntityPlayer player) {
+		Set<Pair<Integer, ItemStack>> list = Sets.newHashSet();
 		if (player.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)) {
 			IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
 			for (int i = 0; i < baubles.getSlots(); i++) {
@@ -50,6 +53,29 @@ public class Baubles extends WTBaublesAccess {
 			}
 		}
 		return list;
+	}
+
+	@Override
+	public Set<Pair<Integer, ItemStack>> getAllWTBaublesByType(EntityPlayer player, Class<? extends ICustomWirelessTerminalItem> type) {
+		Set<Pair<Integer, ItemStack>> list = Sets.newHashSet();
+		if (player.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)) {
+			IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+			for (int i = 0; i < baubles.getSlots(); i++) {
+				if (baubles.getStackInSlot(i).isEmpty()) {
+					continue;
+				}
+				Set<Class<?>> applicableInterfaces = Sets.newHashSet(ClassUtils.getAllInterfaces(baubles.getStackInSlot(i).getItem().getClass()));
+				if (applicableInterfaces.contains(type)) {
+					list.add(Pair.of(i, baubles.getStackInSlot(i)));
+				}
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public Pair<Integer, ItemStack> getFirstWTBaubleByType(EntityPlayer player, Class<? extends ICustomWirelessTerminalItem> type) {
+		return getAllWTBaublesByType(player, type).stream().findFirst().get();
 	}
 
 	@Override

@@ -38,10 +38,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
+import p455w0rd.ae2wtlib.api.WTApi.Integration.Mods;
 import p455w0rd.ae2wtlib.api.client.IWTGuiScrollbar;
 import p455w0rd.ae2wtlib.container.slot.SlotOutput;
 import p455w0rd.ae2wtlib.container.slot.SlotPlayerHotBar;
-import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.integration.JEI;
 
 public abstract class GuiWT extends GuiContainer {
@@ -345,25 +345,25 @@ public abstract class GuiWT extends GuiContainer {
 		else if (s instanceof IMEFluidSlot && ((IMEFluidSlot) s).shouldRenderAsFluid()) {
 			final IMEFluidSlot slot = (IMEFluidSlot) s;
 			final IAEFluidStack fs = slot.getAEFluidStack();
-
+		
 			if (fs != null && isPowered()) {
 				GlStateManager.disableLighting();
 				GlStateManager.disableBlend();
 				final Fluid fluid = fs.getFluid();
 				Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				final TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluid.getStill().toString());
-
+		
 				// Set color for dynamic fluids
 				// Convert int color to RGB
 				float red = (fluid.getColor() >> 16 & 255) / 255.0F;
 				float green = (fluid.getColor() >> 8 & 255) / 255.0F;
 				float blue = (fluid.getColor() & 255) / 255.0F;
 				GlStateManager.color(red, green, blue);
-
+		
 				this.drawTexturedModalRect(s.xPos, s.yPos, sprite, 16, 16);
 				GlStateManager.enableLighting();
 				GlStateManager.enableBlend();
-
+		
 				//if (s instanceof IMEFluidSlot) {
 				//final IMEFluidSlot meFluidSlot = (IMEFluidSlot) s;
 				//fluidStackSizeRenderer.renderStackSize(fontRenderer, fs, s.xPos, s.yPos);
@@ -372,7 +372,7 @@ public abstract class GuiWT extends GuiContainer {
 			else if (!isPowered()) {
 				drawRect(s.xPos, s.yPos, 16 + s.xPos, 16 + s.yPos, 0x66111111);
 			}
-
+		
 			return;
 		}
 		*/

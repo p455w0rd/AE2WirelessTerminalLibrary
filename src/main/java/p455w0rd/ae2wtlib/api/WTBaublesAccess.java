@@ -1,6 +1,6 @@
 package p455w0rd.ae2wtlib.api;
 
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -18,7 +18,7 @@ public abstract class WTBaublesAccess {
 
 	public abstract Pair<Integer, ItemStack> getFirstWTBauble(EntityPlayer player);
 
-	public abstract List<Pair<Integer, ItemStack>> getAllWTBaubles(EntityPlayer player);
+	public abstract Set<Pair<Integer, ItemStack>> getAllWTBaubles(EntityPlayer player);
 
 	public abstract void updateWTBauble(EntityPlayer player, ItemStack wirelessTerm, int slot);
 
@@ -37,5 +37,9 @@ public abstract class WTBaublesAccess {
 	public abstract boolean isBaubleSlot(Slot slot);
 
 	public abstract void sync(EntityPlayer player, ItemStack stack, int slot);
+
+	public abstract Set<Pair<Integer, ItemStack>> getAllWTBaublesByType(EntityPlayer player, Class<? extends ICustomWirelessTerminalItem> type);
+
+	public abstract Pair<Integer, ItemStack> getFirstWTBaubleByType(EntityPlayer player, Class<? extends ICustomWirelessTerminalItem> type);
 
 }

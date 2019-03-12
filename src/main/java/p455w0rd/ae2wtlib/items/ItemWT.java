@@ -3,7 +3,12 @@ package p455w0rd.ae2wtlib.items;
 import static p455w0rd.ae2wtlib.api.WTApi.Constants.NBT.WT_ENCRYPTION_KEY;
 import static p455w0rd.ae2wtlib.api.WTApi.Constants.NBT.WT_INTERNAL_POWER;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.lwjgl.input.Keyboard;
+
+import com.google.common.collect.Sets;
 
 import appeng.api.config.*;
 import appeng.api.util.IConfigManager;
@@ -12,6 +17,8 @@ import appeng.util.ConfigManager;
 import appeng.util.Platform;
 import baubles.api.BaubleType;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.*;
@@ -23,7 +30,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import p455w0rd.ae2wtlib.api.*;
+import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.api.client.IBaubleRender;
 import p455w0rd.ae2wtlib.client.render.ItemLayerWrapper;
 import p455w0rd.ae2wtlib.client.render.RenderLayerWT;
@@ -70,6 +78,17 @@ public abstract class ItemWT extends AEBasePoweredItem implements ICustomWireles
 		return stack1.getItem() == stack2.getItem() && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
 	}
 
+	static final Set<String> validEnchantNames = Sets.newHashSet("soulbound", "soul_bound");
+
+	@Override
+	public boolean isBookEnchantable(final ItemStack stack, final ItemStack book) {
+		Map<Enchantment, Integer> bookEnchants = EnchantmentHelper.getEnchantments(book);
+		Map<Enchantment, Integer> itemEnchants = EnchantmentHelper.getEnchantments(stack);
+		boolean isBookValid = bookEnchants.size() == 1 && bookEnchants.keySet().stream().map(Enchantment::getRegistryName).map(ResourceLocation::getResourcePath).allMatch(validEnchantNames::contains);
+		boolean isItemValid = itemEnchants.size() == 0 || !itemEnchants.keySet().stream().map(Enchantment::getRegistryName).map(ResourceLocation::getResourcePath).allMatch(validEnchantNames::contains);
+		return isBookValid && isItemValid;
+	}
+
 	@Override
 	public boolean isDamageable() {
 		return false;
@@ -79,7 +98,8 @@ public abstract class ItemWT extends AEBasePoweredItem implements ICustomWireles
 	public boolean showDurabilityBar(ItemStack is) {
 		double aeCurrPower = getAECurrentPower(is);
 		double aeMaxPower = getAEMaxPower(is);
-		if ((int) aeCurrPower >= (int) aeMaxPower - 2) {
+		double tenPct = aeMaxPower * 0.1d;
+		if (aeCurrPower != 0 && (int) aeCurrPower >= (int) aeMaxPower - tenPct) {
 			return false;
 		}
 		if (WTApi.instance().isWTCreative(is)) {

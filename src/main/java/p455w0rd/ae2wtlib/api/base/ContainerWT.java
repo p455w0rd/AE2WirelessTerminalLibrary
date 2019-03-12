@@ -35,12 +35,12 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import p455w0rd.ae2wtlib.api.*;
+import p455w0rd.ae2wtlib.api.WTApi.Integration.Mods;
 import p455w0rd.ae2wtlib.api.networking.security.WTIActionHost;
 import p455w0rd.ae2wtlib.api.networking.security.WTPlayerSource;
 import p455w0rd.ae2wtlib.container.slot.*;
 import p455w0rd.ae2wtlib.helpers.WTGuiObjectImpl;
 import p455w0rd.ae2wtlib.init.LibConfig;
-import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.inventory.WTInventoryBooster;
 import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
@@ -220,7 +220,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		//TODO be sure to override in extending container
 		/*
 		if (Platform.isClient()) {
-		
+
 			if (stack == null && getTargetStack() == null) {
 				return;
 			}

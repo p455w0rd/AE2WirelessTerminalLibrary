@@ -1,7 +1,7 @@
 package p455w0rd.ae2wtlib.api;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -52,16 +53,18 @@ public abstract class WTApi {
 
 	public abstract ItemInfinityBooster getBoosterCard();
 
-	public abstract List<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player);
+	public abstract WTGlobals getConstants();
 
-	public abstract List<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player, boolean isBauble);
+	public abstract Set<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player);
+
+	public abstract Set<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player, boolean isBauble);
 
 	// Parent pair contains a boolean which tells whether or not this is a bauble slot
 	// Child pair gives the slot number and ItemStack
-	public abstract List<Pair<Boolean, Pair<Integer, ItemStack>>> getAllWirelessTerminals(EntityPlayer player);
+	public abstract Set<Pair<Boolean, Pair<Integer, ItemStack>>> getAllWirelessTerminals(EntityPlayer player);
 
 	// get a specific type of wireless terminal
-	public abstract List<Pair<Boolean, Pair<Integer, ItemStack>>> getAllWirelessTerminalsByType(EntityPlayer player, Class<? extends ICustomWirelessTerminalItem> type);
+	public abstract Set<Pair<Boolean, Pair<Integer, ItemStack>>> getAllWirelessTerminalsByType(EntityPlayer player, Class<? extends ICustomWirelessTerminalItem> type);
 
 	// used in cases where following method takes 'false' value for isBauble
 	public abstract ItemStack getWTBySlot(EntityPlayer player, int slot, Class<? extends ICustomWirelessTerminalItem> type);
@@ -101,7 +104,7 @@ public abstract class WTApi {
 	public abstract IWirelessAccessPoint getClosestWAPToPlayer(@Nonnull ItemStack wirelessTerm, @Nonnull EntityPlayer player);
 
 	// Get a list of WAPs on the linked network
-	public abstract List<IWirelessAccessPoint> getWAPs(@Nonnull ItemStack wirelessTerm, @Nonnull EntityPlayer player);
+	public abstract Set<IWirelessAccessPoint> getWAPs(@Nonnull ItemStack wirelessTerm, @Nonnull EntityPlayer player);
 
 	public abstract WTGuiObject<?> getGUIObject(EntityPlayer player);
 
@@ -160,6 +163,36 @@ public abstract class WTApi {
 			public static final String WT_ENCRYPTION_KEY = "encryptionKey";
 			public static final String WT_INTERNAL_POWER = "internalCurrentPower";
 
+		}
+
+	}
+
+	public static class Integration {
+
+		public enum Mods {
+
+				JEI("jei", "Just Enough Items"),
+				BAUBLES("baubles", "Baubles"),
+				BAUBLESAPI("Baubles|API", "Baubles API");
+
+			private String modid, name;
+
+			Mods(String modidIn, String nameIn) {
+				modid = modidIn;
+				name = nameIn;
+			}
+
+			public String getId() {
+				return modid;
+			}
+
+			public String getName() {
+				return name;
+			}
+
+			public boolean isLoaded() {
+				return Loader.isModLoaded(getId());
+			}
 		}
 
 	}

@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import p455w0rd.ae2wtlib.api.WTApi.Integration.Mods;
 import p455w0rd.ae2wtlib.api.client.IBaubleRender;
-import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 
 /**
  * Credit to EnderIO

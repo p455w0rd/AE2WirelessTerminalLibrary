@@ -1,4 +1,4 @@
-package p455w0rd.ae2wtlib.client.gui.widgets;
+package p455w0rd.ae2wtlib.api.client.gui.widgets;
 
 import net.minecraft.client.renderer.GlStateManager;
 import p455w0rd.ae2wtlib.api.base.GuiWT;

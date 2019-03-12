@@ -1,7 +1,7 @@
 package p455w0rd.ae2wtlib.init;
 
-import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -32,9 +32,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.AE2WTLib;
 import p455w0rd.ae2wtlib.api.WTApi;
+import p455w0rd.ae2wtlib.api.WTApi.Integration.Mods;
 import p455w0rd.ae2wtlib.api.networking.WTPacket;
 import p455w0rd.ae2wtlib.client.render.BaubleRenderDispatcher;
-import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
 import p455w0rd.ae2wtlib.sync.packets.PacketConfigSync;
 import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 import p455w0rdslib.capabilities.CapabilityChunkLoader;
@@ -150,15 +150,15 @@ public class LibEvents {
 			return;
 		}
 		NonNullList<ItemStack> playerInv = player.inventory.mainInventory;
-		List<Pair<Boolean, Pair<Integer, ItemStack>>> terminals = WTApi.instance().getAllWirelessTerminals(player);
+		Set<Pair<Boolean, Pair<Integer, ItemStack>>> terminals = WTApi.instance().getAllWirelessTerminals(player);
 		ItemStack wirelessTerm = ItemStack.EMPTY;
 		boolean isBauble = false;
 		int wctSlot = -1;
-		for (int i = 0; i < terminals.size(); i++) {
-			if (WTApi.instance().shouldConsumeBoosters(terminals.get(i).getRight().getRight())) {
-				wirelessTerm = terminals.get(i).getRight().getRight();
-				isBauble = terminals.get(i).getLeft();
-				wctSlot = terminals.get(i).getRight().getLeft();
+		for (Pair<Boolean, Pair<Integer, ItemStack>> termPair : terminals) {
+			if (WTApi.instance().shouldConsumeBoosters(termPair.getRight().getRight())) {
+				wirelessTerm = termPair.getRight().getRight();
+				isBauble = termPair.getLeft();
+				wctSlot = termPair.getRight().getLeft();
 				break;
 			}
 		}

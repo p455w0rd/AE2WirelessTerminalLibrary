@@ -4,7 +4,7 @@ import appeng.container.slot.AppEngSlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.items.IItemHandler;
 import p455w0rd.ae2wtlib.api.WTApi;
-import p455w0rd.ae2wtlib.init.LibIntegration.Mods;
+import p455w0rd.ae2wtlib.api.WTApi.Integration.Mods;
 
 public class SlotPlayerHotBar extends AppEngSlot {
 
