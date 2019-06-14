@@ -1,7 +1,5 @@
 package p455w0rd.ae2wtlib.api.client.gui.widgets;
 
-import static p455w0rd.ae2wtlib.api.WTApi.Constants.NBT.AUTOCONSUME_BOOSTER_NBT;
-
 import appeng.client.gui.widgets.ITooltip;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -21,9 +19,8 @@ public class GuiImgButtonBooster extends GuiButton implements ITooltip {
 
 	private ItemStack wirelessTerminal = ItemStack.EMPTY;
 	private boolean currentValue = false;
-	int iconIndex = 0;
 
-	public GuiImgButtonBooster(final int x, final int y, ItemStack wirelessTerminal) {
+	public GuiImgButtonBooster(final int x, final int y, final ItemStack wirelessTerminal) {
 		super(0, x, y, "");
 		this.x = x;
 		this.y = y;
@@ -38,7 +35,7 @@ public class GuiImgButtonBooster extends GuiButton implements ITooltip {
 	}
 
 	@Override
-	public void drawButton(final Minecraft mc, final int mouseX, final int mouseY, float partial) {
+	public void drawButton(final Minecraft mc, final int mouseX, final int mouseY, final float partial) {
 		if (visible) {
 			hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 			mc.renderEngine.bindTexture(new ResourceLocation(wirelessTerminal.getItem().getRegistryName().getResourceDomain(), "textures/gui/states.png"));
@@ -53,10 +50,10 @@ public class GuiImgButtonBooster extends GuiButton implements ITooltip {
 		if (!getWirelessTerminal().hasTagCompound()) {
 			getWirelessTerminal().setTagCompound(new NBTTagCompound());
 		}
-		if (!getWirelessTerminal().getTagCompound().hasKey(AUTOCONSUME_BOOSTER_NBT)) {
+		if (!getWirelessTerminal().getTagCompound().hasKey(WTApi.instance().getConstants().getNBTTagNames().autoConsumeBooster())) {
 			setValue(currentValue);
 		}
-		currentValue = getWirelessTerminal().getTagCompound().getBoolean(AUTOCONSUME_BOOSTER_NBT);
+		currentValue = getWirelessTerminal().getTagCompound().getBoolean(WTApi.instance().getConstants().getNBTTagNames().autoConsumeBooster());
 		return currentValue;
 	}
 
@@ -102,7 +99,7 @@ public class GuiImgButtonBooster extends GuiButton implements ITooltip {
 		if (!getWirelessTerminal().hasTagCompound()) {
 			getWirelessTerminal().setTagCompound(new NBTTagCompound());
 		}
-		getWirelessTerminal().getTagCompound().setBoolean(AUTOCONSUME_BOOSTER_NBT, value);
+		getWirelessTerminal().getTagCompound().setBoolean(WTApi.instance().getConstants().getNBTTagNames().autoConsumeBooster(), value);
 		WTApi.instance().getNetHandler().sendToServer(WTApi.instance().getNetHandler().createAutoConsumeBoosterPacket(value));
 	}
 

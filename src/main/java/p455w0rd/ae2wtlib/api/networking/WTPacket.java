@@ -7,12 +7,9 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.*;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import p455w0rd.ae2wtlib.api.networking.WTPacketHandlerBase.PacketTypes;
 import p455w0rd.ae2wtlib.init.LibNetworking;
-import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
-@SuppressWarnings("rawtypes")
-public abstract class WTPacket implements Packet {
+public abstract class WTPacket implements Packet<INetHandler> {
 
 	private PacketBuffer p;
 	private PacketCallState caller;

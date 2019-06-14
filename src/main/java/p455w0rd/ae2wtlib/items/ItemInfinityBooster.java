@@ -13,6 +13,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import p455w0rd.ae2wtlib.api.item.ItemBase;
 import p455w0rd.ae2wtlib.init.LibConfig;
 import p455w0rd.ae2wtlib.init.LibGlobals;
 

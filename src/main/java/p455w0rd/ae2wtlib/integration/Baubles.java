@@ -17,10 +17,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
-import p455w0rd.ae2wtlib.api.WTBaublesAccess;
-import p455w0rd.ae2wtlib.api.base.ContainerWT;
-import p455w0rd.ae2wtlib.container.slot.SlotAEBauble;
+import p455w0rd.ae2wtlib.api.*;
+import p455w0rd.ae2wtlib.api.container.ContainerWT;
+import p455w0rd.ae2wtlib.api.container.slot.SlotAEBauble;
 import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.sync.packets.PacketBaubleSync;
 
@@ -65,7 +64,7 @@ public class Baubles extends WTBaublesAccess {
 					continue;
 				}
 				Set<Class<?>> applicableInterfaces = Sets.newHashSet(ClassUtils.getAllInterfaces(baubles.getStackInSlot(i).getItem().getClass()));
-				if (applicableInterfaces.contains(type)) {
+				if (applicableInterfaces.contains(type) || WTApi.instance().getWUTUtility().doesWUTSupportType(baubles.getStackInSlot(i), type)) {
 					list.add(Pair.of(i, baubles.getStackInSlot(i)));
 				}
 			}
@@ -75,7 +74,11 @@ public class Baubles extends WTBaublesAccess {
 
 	@Override
 	public Pair<Integer, ItemStack> getFirstWTBaubleByType(EntityPlayer player, Class<? extends ICustomWirelessTerminalItem> type) {
-		return getAllWTBaublesByType(player, type).stream().findFirst().get();
+		List<Pair<Integer, ItemStack>> baubleList = Lists.newArrayList(getAllWTBaublesByType(player, type));
+		if (baubleList.size() > 0) {
+			return baubleList.get(0);
+		}
+		return Pair.of(-1, ItemStack.EMPTY);
 	}
 
 	@Override
@@ -95,18 +98,8 @@ public class Baubles extends WTBaublesAccess {
 			IBaublesItemHandler baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
 			ItemStack wirelessTerminal = baubles.getStackInSlot(slot);
 			if (!wirelessTerminal.isEmpty()) {
-				Class<?> clazz = wirelessTerminal.getItem().getClass();
-				Class<?>[] interfaces = clazz.getInterfaces();
-				if (interfaces.length <= 0) {
-					// this should only happen for creative versions
-					clazz = clazz.getSuperclass();
-					interfaces = clazz.getInterfaces();
-				}
-				List<Class<?>> applicableInterfaces = Lists.newArrayList(interfaces);
-				if (wirelessTerminal.getItem() instanceof ICustomWirelessTerminalItem) {
-					applicableInterfaces.add(ICustomWirelessTerminalItem.class);
-				}
-				if (!wirelessTerminal.isEmpty() && applicableInterfaces.contains(type)) {
+				List<Class<?>> applicableInterfaces = ClassUtils.getAllInterfaces(wirelessTerminal.getItem().getClass());
+				if (!wirelessTerminal.isEmpty() && (applicableInterfaces.contains(type) || WTApi.instance().getWUTUtility().doesWUTSupportType(wirelessTerminal, type))) {
 					return wirelessTerminal;
 				}
 			}

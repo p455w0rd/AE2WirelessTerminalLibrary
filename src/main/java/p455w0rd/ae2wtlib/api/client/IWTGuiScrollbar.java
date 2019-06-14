@@ -1,7 +1,7 @@
 package p455w0rd.ae2wtlib.api.client;
 
 import appeng.client.gui.widgets.IScrollSource;
-import p455w0rd.ae2wtlib.api.base.GuiWT;
+import p455w0rd.ae2wtlib.api.client.gui.GuiWT;
 
 /**
  * @author p455w0rd

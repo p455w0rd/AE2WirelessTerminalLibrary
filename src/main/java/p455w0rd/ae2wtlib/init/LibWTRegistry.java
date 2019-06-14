@@ -7,10 +7,13 @@ import com.google.common.collect.Lists;
 import appeng.api.AEApi;
 import appeng.api.features.IWirelessTermHandler;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.LoaderState;
 import p455w0rd.ae2wtlib.AE2WTLib;
 import p455w0rd.ae2wtlib.api.*;
-import p455w0rd.ae2wtlib.items.ItemWT;
+import p455w0rd.ae2wtlib.api.item.ItemWT;
+import p455w0rd.ae2wtlib.recipe.RecipeNewTerminal;
+import p455w0rdslib.api.client.ItemRenderingRegistry;
 
 /**
  * @author p455w0rd
@@ -26,14 +29,14 @@ public class LibWTRegistry extends WTRegistry {
 	}
 
 	@Override
-	public void registerWirelessTerminal(ICustomWirelessTerminalItem wirelessTerminal) {
+	public void registerWirelessTerminal(final ICustomWirelessTerminalItem wirelessTerminal) {
 		if (AE2WTLib.PROXY.getLoaderState() != LoaderState.PREINITIALIZATION) {
 			LibLogger.warn("Wireless Terminals must be registered during PreInit!");
 			return;
 		}
 		if (wirelessTerminal != null) {
 			if (!(wirelessTerminal instanceof ItemWT)) {
-				LibLogger.warn("Wireless terminal items must extends ItemWT.class");
+				LibLogger.warn("Wireless terminal items must extend ItemWT.class");
 				return;
 			}
 			if (!(wirelessTerminal instanceof ICustomWirelessTerminalItem)) {
@@ -44,11 +47,24 @@ public class LibWTRegistry extends WTRegistry {
 				LibLogger.warn("Terminal " + wirelessTerminal.getClass() + " has already been registered!");
 				return;
 			}
+			addNewRecipes(wirelessTerminal);
 			getRegisteredTerminals().add(wirelessTerminal);
+			ItemRenderingRegistry.registerCustomRenderingItem(wirelessTerminal);
 		}
 	}
 
-	private static void registerTerminalWithAE2(IWirelessTermHandler wirelessTerminal) {
+	private void addNewRecipes(final ICustomWirelessTerminalItem wirelessTerminal) {
+		if (wirelessTerminal.isCreative()) {
+			return;
+		}
+		final Item item = (Item) wirelessTerminal;
+		final ItemStack stack = new ItemStack(item);
+		for (final ICustomWirelessTerminalItem wth : getRegisteredTerminals()) {
+			RecipeNewTerminal.addRecipe(stack, new ItemStack((Item) wth));
+		}
+	}
+
+	private static void registerTerminalWithAE2(final IWirelessTermHandler wirelessTerminal) {
 		if (wirelessTerminal instanceof ItemWT) {
 			AEApi.instance().registries().wireless().registerWirelessHandler(wirelessTerminal);
 			AEApi.instance().registries().charger().addChargeRate((Item) wirelessTerminal, LibConfig.WT_MAX_POWER);
@@ -56,7 +72,7 @@ public class LibWTRegistry extends WTRegistry {
 	}
 
 	public static void registerAllTerminalsWithAE2() {
-		for (ICustomWirelessTerminalItem wirelessTerminal : WTApi.instance().getRegistry().getRegisteredTerminals()) {
+		for (final ICustomWirelessTerminalItem wirelessTerminal : WTApi.instance().getWirelessTerminalRegistry().getRegisteredTerminals()) {
 			if (wirelessTerminal instanceof ItemWT) {
 				registerTerminalWithAE2(wirelessTerminal);
 			}

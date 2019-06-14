@@ -22,18 +22,16 @@ import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
-import p455w0rd.ae2wtlib.sync.packets.PacketBaubleSync;
-import p455w0rd.ae2wtlib.sync.packets.PacketConfigSync;
-import p455w0rd.ae2wtlib.sync.packets.PacketEmptyTrash;
-import p455w0rd.ae2wtlib.sync.packets.PacketSetAutoConsumeBoosters;
-import p455w0rd.ae2wtlib.sync.packets.PacketSetInRange;
-import p455w0rd.ae2wtlib.sync.packets.PacketSwapSlots;
-import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
+import p455w0rd.ae2wtlib.sync.packets.*;
 
 public class WTPacketHandlerBase {
 	private static final Map<Class<? extends WTPacket>, PacketTypes> REVERSE_LOOKUP = new HashMap<Class<? extends WTPacket>, WTPacketHandlerBase.PacketTypes>();
 
 	public enum PacketTypes {
+			PACKET_SWITCH_WUT_GUI(PacketSwitchWutTerminalGui.class),
+
+			PACKET_SET_WUT_SELECTION(PacketWutTerminalSelect.class),
+
 			PACKET_SWAP_SLOTS(PacketSwapSlots.class),
 
 			PACKET_EMPTY_TRASH(PacketEmptyTrash.class),

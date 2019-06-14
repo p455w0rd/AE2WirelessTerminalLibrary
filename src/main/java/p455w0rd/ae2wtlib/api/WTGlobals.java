@@ -1,5 +1,7 @@
 package p455w0rd.ae2wtlib.api;
 
+import net.minecraft.util.ResourceLocation;
+
 /**
  * @author p455w0rd
  *
@@ -14,9 +16,13 @@ public abstract class WTGlobals {
 
 	public abstract String getItemGroup();
 
-	public abstract String boosterCard();
+	public abstract String boosterCardUnlocalizedName();
+
+	public abstract ResourceLocation getStatesTexture();
 
 	public abstract WTTooltips getTooltips();
+
+	public abstract WTNBTTagNames getNBTTagNames();
 
 	public static abstract class WTTooltips {
 
@@ -51,6 +57,22 @@ public abstract class WTGlobals {
 		public abstract String units();
 
 		public abstract String jeiCanBeWorn();
+
+	}
+
+	public static abstract class WTNBTTagNames {
+
+		public abstract String infinityEnergy();
+
+		public abstract String boosterSlot();
+
+		public abstract String inRange();
+
+		public abstract String autoConsumeBooster();
+
+		public abstract String encryptionKey();
+
+		public abstract String internalCurrentPower();
 
 	}
 

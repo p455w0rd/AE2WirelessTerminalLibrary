@@ -6,8 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import p455w0rd.ae2wtlib.api.WTApi;
+import p455w0rd.ae2wtlib.api.networking.INetworkInfo;
 import p455w0rd.ae2wtlib.api.networking.WTPacket;
-import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
 /**
  * @author p455w0rd

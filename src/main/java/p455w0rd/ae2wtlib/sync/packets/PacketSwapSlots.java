@@ -18,9 +18,9 @@ package p455w0rd.ae2wtlib.sync.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
-import p455w0rd.ae2wtlib.api.base.ContainerWT;
+import p455w0rd.ae2wtlib.api.container.ContainerWT;
+import p455w0rd.ae2wtlib.api.networking.INetworkInfo;
 import p455w0rd.ae2wtlib.api.networking.WTPacket;
-import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
 public class PacketSwapSlots extends WTPacket {
 

@@ -16,23 +16,18 @@ public class WTClientPacketHandler extends WTPacketHandlerBase implements IPacke
 		return INSTANCE;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onPacketData(final INetworkInfo manager, final INetHandler handler, final FMLProxyPacket packet, final EntityPlayer player) {
 		final ByteBuf stream = packet.payload();
-
 		try {
 			final int packetType = stream.readInt();
 			final WTPacket pack = PacketTypes.getPacket(packetType).parsePacket(stream);
-
 			final PacketCallState callState = new PacketCallState() {
-
 				@Override
 				public void call(final WTPacket appEngPacket) {
 					appEngPacket.clientPacketData(manager, appEngPacket, Minecraft.getMinecraft().player);
 				}
 			};
-
 			pack.setCallParam(callState);
 			PacketThreadUtil.checkThreadAndEnqueue(pack, handler, Minecraft.getMinecraft());
 			callState.call(pack);

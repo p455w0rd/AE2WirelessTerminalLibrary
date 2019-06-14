@@ -12,7 +12,7 @@ import java.text.*;
  * @version rv2
  * @since rv2
  */
-public enum ReadableNumberConverter implements ISlimReadableNumberConverter, IWideReadableNumberConverter {
+public enum ReadableNumberConverter implements IReadableNumberConverter {
 
 		INSTANCE;
 
@@ -83,7 +83,7 @@ public enum ReadableNumberConverter implements ISlimReadableNumberConverter, IWi
 		final String withPrecision = format.format(last / DIVISION_BASE) + postFix;
 		final String withoutPrecision = Long.toString(base) + postFix;
 
-		final String slimResult = (withPrecision.length() <= width) ? withPrecision : withoutPrecision;
+		final String slimResult = withPrecision.length() <= width ? withPrecision : withoutPrecision;
 
 		// post condition
 		assert slimResult.length() <= width;

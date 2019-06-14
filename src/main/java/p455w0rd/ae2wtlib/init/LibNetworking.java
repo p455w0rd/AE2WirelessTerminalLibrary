@@ -11,8 +11,10 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientCustomPacketE
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerCustomPacketEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import p455w0rd.ae2wtlib.api.WTNetworkHandler;
+import p455w0rd.ae2wtlib.api.networking.IPacketHandler;
 import p455w0rd.ae2wtlib.api.networking.WTPacket;
-import p455w0rd.ae2wtlib.sync.network.*;
+import p455w0rd.ae2wtlib.sync.network.WTClientPacketHandler;
+import p455w0rd.ae2wtlib.sync.network.WTServerPacketHandler;
 import p455w0rd.ae2wtlib.sync.packets.*;
 
 public class LibNetworking extends WTNetworkHandler {
@@ -33,7 +35,7 @@ public class LibNetworking extends WTNetworkHandler {
 	}
 
 	public static void postInit() {
-		//NetworkRegistry.INSTANCE.registerGuiHandler(AE2WTLib.INSTANCE, new ModGuiHandler());
+		LibGuiHandler.register();
 	}
 
 	public static LibNetworking instance() {
@@ -93,7 +95,7 @@ public class LibNetworking extends WTNetworkHandler {
 	}
 
 	@Override
-	public WTPacket createAutoConsumeBoosterPacket(boolean value) {
+	public WTPacket createAutoConsumeBoosterPacket(final boolean value) {
 		return new PacketSetAutoConsumeBoosters(value);
 	}
 
@@ -103,8 +105,13 @@ public class LibNetworking extends WTNetworkHandler {
 	}
 
 	@Override
-	public WTPacket createInfinityEnergySyncPacket(int energy, UUID playerID, boolean isBauble, int slot) {
+	public WTPacket createInfinityEnergySyncPacket(final int energy, final UUID playerID, final boolean isBauble, final int slot) {
 		return new PacketSyncInfinityEnergy(energy, playerID, isBauble, slot);
+	}
+
+	@Override
+	public WTPacket createSetInRangePacket(final boolean isInRange, final boolean isBauble, final int wtSlot) {
+		return new PacketSetInRange(isInRange, isBauble, wtSlot);
 	}
 
 }

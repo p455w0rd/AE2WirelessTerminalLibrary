@@ -28,4 +28,6 @@ public abstract class WTNetworkHandler {
 
 	public abstract WTPacket createInfinityEnergySyncPacket(int energy, UUID playerID, boolean isBauble, int slot);
 
+	public abstract WTPacket createSetInRangePacket(boolean isInRange, boolean isBauble, int wtSlot);
+
 }

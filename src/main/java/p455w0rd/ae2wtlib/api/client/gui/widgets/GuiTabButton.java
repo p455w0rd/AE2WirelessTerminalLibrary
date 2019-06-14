@@ -1,33 +1,43 @@
+/*
+ * This file is part of Applied Energistics 2.
+ * Copyright (c) 2013 - 2014, AlgorithmX2, All rights reserved.
+ *
+ * Applied Energistics 2 is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Applied Energistics 2 is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Applied Energistics 2. If not, see
+ * <http://www.gnu.org/licenses/lgpl>.
+ */
+
 package p455w0rd.ae2wtlib.api.client.gui.widgets;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import appeng.client.gui.widgets.ITooltip;
-import appeng.core.AppEng;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-/**
- * @author p455w0rd
- *
- */
 public class GuiTabButton extends GuiButton implements ITooltip {
 	private final RenderItem itemRenderer;
 	private final String message;
 	private int hideEdge = 0;
 	private int myIcon = -1;
-	private ItemStack myItem = ItemStack.EMPTY;
+	private ItemStack myItem;
 
-	public GuiTabButton(final int xIn, final int yIn, final int ico, final String message, final RenderItem ir) {
+	public GuiTabButton(final int x, final int y, final int ico, final String message, final RenderItem ir) {
 		super(0, 0, 16, "");
 
-		x = xIn;
-		y = yIn;
+		this.x = x;
+		this.y = y;
 		width = 22;
 		height = 22;
 		myIcon = ico;
@@ -35,10 +45,19 @@ public class GuiTabButton extends GuiButton implements ITooltip {
 		itemRenderer = ir;
 	}
 
-	public GuiTabButton(final int xIn, final int yIn, final ItemStack ico, final String message, final RenderItem ir) {
+	/**
+	 * Using itemstack as an icon
+	 *
+	 * @param x x pos of button
+	 * @param y y pos of button
+	 * @param ico used icon
+	 * @param message mouse over message
+	 * @param ir renderer
+	 */
+	public GuiTabButton(final int x, final int y, final ItemStack ico, final String message, final RenderItem ir) {
 		super(0, 0, 16, "");
-		x = xIn;
-		y = yIn;
+		this.x = x;
+		this.y = y;
 		width = 22;
 		height = 22;
 		myItem = ico;
@@ -47,37 +66,35 @@ public class GuiTabButton extends GuiButton implements ITooltip {
 	}
 
 	@Override
-	public void drawButton(final Minecraft minecraft, final int mouseX, final int mouseY, float partial) {
+	public void drawButton(final Minecraft minecraft, final int x, final int y, float partial) {
 		if (visible) {
-			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			minecraft.renderEngine.bindTexture(new ResourceLocation(AppEng.MOD_ID, "textures/guis/states.png"));
-			hovered = x >= x && y >= y && x < x + width && y < y + height;
+			GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+			minecraft.renderEngine.bindTexture(new ResourceLocation("appliedenergistics2", "textures/guis/states.png"));
+			hovered = x >= this.x && y >= this.y && x < this.x + width && y < this.y + height;
 
 			int uv_x = (hideEdge > 0 ? 11 : 13);
 
 			final int offsetX = hideEdge > 0 ? 1 : 0;
 
-			//this.drawTexturedModalRect( this.xPosition, this.yPosition, uv_x * 16, 0, 25, 22 );
+			this.drawTexturedModalRect(this.x, this.y, uv_x * 16, 0, 25, 22);
 
 			if (myIcon >= 0) {
 				final int uv_y = (int) Math.floor(myIcon / 16);
 				uv_x = myIcon - uv_y * 16;
 
-				this.drawTexturedModalRect(offsetX + x + 3, y + 6, uv_x * 16, uv_y * 16, 16, 16);
+				this.drawTexturedModalRect(offsetX + this.x + 3, this.y + 3, uv_x * 16, uv_y * 16, 16, 16);
 			}
 
 			mouseDragged(minecraft, x, y);
 
-			if (!myItem.isEmpty()) {
+			if (myItem != null) {
 				zLevel = 100.0F;
 				itemRenderer.zLevel = 100.0F;
 
-				GL11.glEnable(GL11.GL_LIGHTING);
-				GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+				GlStateManager.enableDepth();
 				RenderHelper.enableGUIStandardItemLighting();
-				//this.itemRenderer.renderItemAndEffectIntoGUI( fontrenderer, minecraft.renderEngine, this.myItem, offsetX + this.xPosition + 3, this.yPosition + 6 );
-				itemRenderer.renderItemIntoGUI(myItem, offsetX + x + 3, y + 6);
-				GL11.glDisable(GL11.GL_LIGHTING);
+				itemRenderer.renderItemAndEffectIntoGUI(myItem, offsetX + this.x + 3, this.y + 3);
+				GlStateManager.disableDepth();
 
 				itemRenderer.zLevel = 0.0F;
 				zLevel = 0.0F;

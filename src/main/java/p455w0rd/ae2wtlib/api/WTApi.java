@@ -9,14 +9,17 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import appeng.api.implementations.tiles.IWirelessAccessPoint;
+import appeng.bootstrap.FeatureFactory;
 import appeng.container.slot.AppEngSlot;
+import appeng.core.Api;
+import appeng.core.ApiDefinitions;
+import appeng.core.api.definitions.*;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.inv.IAEAppEngInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -31,11 +34,11 @@ public abstract class WTApi {
 	public static WTApi instance() {
 		if (WTApi.api == null) {
 			try {
-				Class<?> clazz = Class.forName("p455w0rd.ae2wtlib.init.LibApiImpl");
-				Method instanceAccessor = clazz.getMethod("instance");
+				final Class<?> clazz = Class.forName("p455w0rd.ae2wtlib.init.LibApiImpl");
+				final Method instanceAccessor = clazz.getMethod("instance");
 				WTApi.api = (WTApi) instanceAccessor.invoke(null);
 			}
-			catch (Throwable e) {
+			catch (final Throwable e) {
 				return null;
 			}
 		}
@@ -45,7 +48,7 @@ public abstract class WTApi {
 
 	public abstract WTConfig getConfig();
 
-	public abstract WTRegistry getRegistry();
+	public abstract WTRegistry getWirelessTerminalRegistry();
 
 	public abstract WTNetworkHandler getNetHandler();
 
@@ -54,6 +57,8 @@ public abstract class WTApi {
 	public abstract ItemInfinityBooster getBoosterCard();
 
 	public abstract WTGlobals getConstants();
+
+	public abstract WUTUtility getWUTUtility();
 
 	public abstract Set<Pair<Integer, ItemStack>> getWirelessTerminals(EntityPlayer player);
 
@@ -72,6 +77,8 @@ public abstract class WTApi {
 	public abstract ItemStack getWTBySlot(EntityPlayer player, boolean isBauble, int slot, Class<? extends ICustomWirelessTerminalItem> type);
 
 	public abstract ItemStack getWTBySlot(EntityPlayer player, int slot);
+
+	public abstract ItemStack getWTBySlot(final EntityPlayer player, boolean isBauble, final int slot);
 
 	public abstract ItemStack getFirstWirelessTerminal(EntityPlayer player);
 
@@ -110,7 +117,7 @@ public abstract class WTApi {
 
 	public abstract WTGuiObject<?> getGUIObject(@Nullable ItemStack wirelessTerm, @Nonnull EntityPlayer player);
 
-	public abstract WTGuiObject<?> getGUIObject(ICustomWirelessTermHandler wth, @Nonnull ItemStack wirelessTerm, EntityPlayer player);
+	public abstract WTGuiObject<?> getGUIObject(ICustomWirelessTerminalItem wth, @Nonnull ItemStack wirelessTerm, EntityPlayer player);
 
 	// Set Infinity Energy directly on a Wireless Terminal
 	public abstract void setInfinityEnergy(@Nonnull ItemStack wirelessTerm, int amount);
@@ -152,47 +159,34 @@ public abstract class WTApi {
 	@SideOnly(Side.CLIENT)
 	public abstract String color(String color);
 
-	public static class Constants {
+	public static class AE2Access {
 
-		public static class NBT {
-
-			public static final String INFINITY_ENERGY_NBT = "InfinityEnergy";
-			public static final String BOOSTER_SLOT_NBT = "BoosterSlot";
-			public static final String IN_RANGE_NBT = "IsInRange";
-			public static final String AUTOCONSUME_BOOSTER_NBT = "AutoConsumeBoosters";
-			public static final String WT_ENCRYPTION_KEY = "encryptionKey";
-			public static final String WT_INTERNAL_POWER = "internalCurrentPower";
-
+		public static Api getApi() {
+			return Api.INSTANCE;
 		}
 
-	}
+		public static ApiDefinitions getDefinitions() {
+			return getApi().definitions();
+		}
 
-	public static class Integration {
+		public static FeatureFactory getRegistry() {
+			return getDefinitions().getRegistry();
+		}
 
-		public enum Mods {
+		public static ApiBlocks getBlocks() {
+			return getDefinitions().blocks();
+		}
 
-				JEI("jei", "Just Enough Items"),
-				BAUBLES("baubles", "Baubles"),
-				BAUBLESAPI("Baubles|API", "Baubles API");
+		public static ApiItems getItems() {
+			return getDefinitions().items();
+		}
 
-			private String modid, name;
+		public static ApiMaterials getMaterials() {
+			return getDefinitions().materials();
+		}
 
-			Mods(String modidIn, String nameIn) {
-				modid = modidIn;
-				name = nameIn;
-			}
-
-			public String getId() {
-				return modid;
-			}
-
-			public String getName() {
-				return name;
-			}
-
-			public boolean isLoaded() {
-				return Loader.isModLoaded(getId());
-			}
+		public static ApiParts getParts() {
+			return getDefinitions().parts();
 		}
 
 	}

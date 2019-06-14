@@ -15,15 +15,13 @@
  */
 package p455w0rd.ae2wtlib.sync.packets;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import p455w0rd.ae2wtlib.api.WTApi;
+import p455w0rd.ae2wtlib.api.networking.INetworkInfo;
 import p455w0rd.ae2wtlib.api.networking.WTPacket;
-import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
 
 /**
  * @author p455w0rd
@@ -31,6 +29,8 @@ import p455w0rd.ae2wtlib.sync.network.INetworkInfo;
  */
 public class PacketSetInRange extends WTPacket {
 
+	int wtSlot;
+	boolean isBauble;
 	boolean isInRange;
 
 	public PacketSetInRange(final ByteBuf stream) {
@@ -38,8 +38,10 @@ public class PacketSetInRange extends WTPacket {
 	}
 
 	// api
-	public PacketSetInRange(boolean inRange) {
-		isInRange = inRange;
+	public PacketSetInRange(final boolean isInRange, final boolean isBauble, final int wtSlot) {
+		this.isInRange = isInRange;
+		this.isBauble = isBauble;
+		this.wtSlot = wtSlot;
 		final ByteBuf data = Unpooled.buffer();
 		data.writeInt(getPacketID());
 		data.writeBoolean(isInRange);
@@ -52,8 +54,9 @@ public class PacketSetInRange extends WTPacket {
 
 	@Override
 	public void clientPacketData(final INetworkInfo network, final WTPacket packet, final EntityPlayer player) {
-		for (Pair<Integer, ItemStack> wirelessTerm : WTApi.instance().getWirelessTerminals(player)) {
-			WTApi.instance().setInRange(wirelessTerm.getRight(), isInRange);
+		final ItemStack wirelessTerminal = WTApi.instance().getWTBySlot(player, isBauble, wtSlot);
+		if (!wirelessTerminal.isEmpty()) {
+			WTApi.instance().setInRange(wirelessTerminal, isInRange);
 		}
 	}
 

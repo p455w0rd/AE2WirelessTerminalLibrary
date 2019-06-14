@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import p455w0rd.ae2wtlib.api.WTApi.Integration.Mods;
 import p455w0rd.ae2wtlib.api.client.IBaubleRender;
+import p455w0rdslib.LibGlobals.Mods;
 
 /**
  * Credit to EnderIO
@@ -27,7 +27,7 @@ public class RenderLayerWT implements IBaubleRender {
 	// see LayerCustomHead
 
 	@Override
-	public void doRenderLayer(RenderPlayer renderPlayer, ItemStack piece, int slot, AbstractClientPlayer entitylivingbaseIn, float p_177141_2_, float p_177141_3_, float partialTicks, float p_177141_5_, float p_177141_6_, float p_177141_7_, float scale) {
+	public void doRenderLayer(final RenderPlayer renderPlayer, final ItemStack piece, final int slot, final AbstractClientPlayer entitylivingbaseIn, final float p_177141_2_, final float p_177141_3_, final float partialTicks, final float p_177141_5_, final float p_177141_6_, final float p_177141_7_, final float scale) {
 		if (!Mods.BAUBLES.isLoaded()) {
 			return;
 		}
@@ -43,8 +43,8 @@ public class RenderLayerWT implements IBaubleRender {
 		}
 
 		position(renderPlayer, slot);
-		float pbx = OpenGlHelper.lastBrightnessX;
-		float pby = OpenGlHelper.lastBrightnessY;
+		final float pbx = OpenGlHelper.lastBrightnessX;
+		final float pby = OpenGlHelper.lastBrightnessY;
 		if (piece.getItem().hasEffect(piece)) {
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
 		}
@@ -55,7 +55,7 @@ public class RenderLayerWT implements IBaubleRender {
 		GlStateManager.popMatrix();
 	}
 
-	private void position(RenderPlayer renderPlayer, int slot) {
+	private void position(final RenderPlayer renderPlayer, final int slot) {
 		switch (slot) {
 		case 1:
 			renderPlayer.getMainModel().bipedRightArm.postRender(0.0625F);

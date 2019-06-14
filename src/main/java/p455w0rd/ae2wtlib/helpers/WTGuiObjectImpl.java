@@ -30,7 +30,7 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 	private final EntityPlayer myPlayer;
 	private IGrid targetGrid;
 	private IStorageGrid sg;
-	private IMEMonitor<O> itemStorage;
+	private IMEMonitor<O> objectStorage;
 	private IWirelessAccessPoint myWap;
 	private double sqRange = Double.MAX_VALUE;
 	private double myRange = Double.MAX_VALUE;
@@ -59,9 +59,9 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 				if (targetGrid != null) {
 					sg = targetGrid.getCache(IStorageGrid.class);
 					if (sg != null) {
-						if (wh instanceof ICustomWirelessTermHandler) {
-							IStorageChannel<O> channel = (IStorageChannel<O>) ((ICustomWirelessTermHandler) wh).getStorageChannel();
-							itemStorage = sg.getInventory(channel);
+						if (wh instanceof ICustomWirelessTerminalItem) {
+							final IStorageChannel<O> channel = (IStorageChannel<O>) ((ICustomWirelessTerminalItem) wh).getStorageChannel(is);
+							objectStorage = sg.getInventory(channel);
 						}
 					}
 				}
@@ -71,7 +71,7 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 
 	@Override
 	public List<IWirelessAccessPoint> getWAPs() {
-		List<IWirelessAccessPoint> wapList = Lists.newArrayList();
+		final List<IWirelessAccessPoint> wapList = Lists.newArrayList();
 		if (targetGrid != null) {
 			final IMachineSet tw = targetGrid.getMachines(TileWireless.class);
 			for (final IGridNode n : tw) {
@@ -111,7 +111,7 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 	}
 
 	@Override
-	public <T extends IAEStack<T>> IMEMonitor<T> getInventory(IStorageChannel<T> channel) {
+	public <T extends IAEStack<T>> IMEMonitor<T> getInventory(final IStorageChannel<T> channel) {
 		if (sg != null && channel != null) {
 			return sg.getInventory(channel);
 		}
@@ -120,15 +120,15 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 
 	@Override
 	public void addListener(final IMEMonitorHandlerReceiver<O> l, final Object verificationToken) {
-		if (itemStorage != null) {
-			itemStorage.addListener(l, verificationToken);
+		if (objectStorage != null) {
+			objectStorage.addListener(l, verificationToken);
 		}
 	}
 
 	@Override
 	public void removeListener(final IMEMonitorHandlerReceiver<O> l) {
-		if (itemStorage != null) {
-			itemStorage.removeListener(l);
+		if (objectStorage != null) {
+			objectStorage.removeListener(l);
 		}
 	}
 
@@ -138,77 +138,77 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 	@Override
 	@Deprecated
 	public IItemList<O> getAvailableItems(final IItemList<O> out) {
-		if (itemStorage != null) {
-			return itemStorage.getAvailableItems(out);
+		if (objectStorage != null) {
+			return objectStorage.getAvailableItems(out);
 		}
 		return out;
 	}
 
 	@Override
 	public IItemList<O> getStorageList() {
-		if (itemStorage != null) {
-			return itemStorage.getStorageList();
+		if (objectStorage != null) {
+			return objectStorage.getStorageList();
 		}
 		return null;
 	}
 
 	@Override
 	public AccessRestriction getAccess() {
-		if (itemStorage != null) {
-			return itemStorage.getAccess();
+		if (objectStorage != null) {
+			return objectStorage.getAccess();
 		}
 		return AccessRestriction.NO_ACCESS;
 	}
 
 	@Override
 	public boolean isPrioritized(final O input) {
-		if (itemStorage != null) {
-			return itemStorage.isPrioritized(input);
+		if (objectStorage != null) {
+			return objectStorage.isPrioritized(input);
 		}
 		return false;
 	}
 
 	@Override
 	public boolean canAccept(final O input) {
-		if (itemStorage != null) {
-			return itemStorage.canAccept(input);
+		if (objectStorage != null) {
+			return objectStorage.canAccept(input);
 		}
 		return false;
 	}
 
 	@Override
 	public int getPriority() {
-		if (itemStorage != null) {
-			return itemStorage.getPriority();
+		if (objectStorage != null) {
+			return objectStorage.getPriority();
 		}
 		return 0;
 	}
 
 	@Override
 	public int getSlot() {
-		if (itemStorage != null) {
-			return itemStorage.getSlot();
+		if (objectStorage != null) {
+			return objectStorage.getSlot();
 		}
 		return 0;
 	}
 
 	@Override
 	public boolean validForPass(final int i) {
-		return itemStorage.validForPass(i);
+		return objectStorage.validForPass(i);
 	}
 
 	@Override
 	public O injectItems(final O input, final Actionable type, final IActionSource src) {
-		if (itemStorage != null) {
-			return itemStorage.injectItems(input, type, src);
+		if (objectStorage != null) {
+			return objectStorage.injectItems(input, type, src);
 		}
 		return input;
 	}
 
 	@Override
 	public O extractItems(final O request, final Actionable mode, final IActionSource src) {
-		if (itemStorage != null) {
-			return itemStorage.extractItems(request, mode, src);
+		if (objectStorage != null) {
+			return objectStorage.extractItems(request, mode, src);
 		}
 		return null;
 	}
@@ -216,11 +216,11 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 	@SuppressWarnings("unchecked")
 	@Override
 	public IStorageChannel<O> getChannel() {
-		if (itemStorage != null) {
-			return itemStorage.getChannel();
+		if (objectStorage != null) {
+			return objectStorage.getChannel();
 		}
-		if (wth instanceof ICustomWirelessTermHandler) {
-			return (IStorageChannel<O>) itemStorage;
+		if (wth instanceof ICustomWirelessTerminalItem) {
+			return (IStorageChannel<O>) objectStorage;
 		}
 		return null;
 	}
@@ -261,15 +261,15 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 		boolean ignoreRange = false;
 		if (!effectiveItem.isEmpty() && WTApi.instance().isAnyWT(effectiveItem)) {
 			if (effectiveItem.getItem() instanceof ICustomWirelessTerminalItem) {
-				ICustomWirelessTerminalItem item = (ICustomWirelessTerminalItem) effectiveItem.getItem();
-				ignoreRange = item.checkForBooster(effectiveItem);
+				final ICustomWirelessTerminalItem item = (ICustomWirelessTerminalItem) effectiveItem.getItem();
+				ignoreRange = item.hasInfiniteRange(effectiveItem);
 			}
 		}
 		return getActionableNode(ignoreRange);
 	}
 
 	@Override
-	public IGridNode getActionableNode(boolean ignoreRange) {
+	public IGridNode getActionableNode(final boolean ignoreRange) {
 		this.rangeCheck(ignoreRange);
 		if (myWap != null) {
 			if (myWap.getActionableNode() != null) {
@@ -282,9 +282,9 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 		}
 		else {
 			if (ignoreRange) {
-				IGrid grid = getTargetGrid();
+				final IGrid grid = getTargetGrid();
 				if (grid != null) {
-					IGridNode node = grid.getPivot();
+					final IGridNode node = grid.getPivot();
 					if (node != null) {
 						return node;
 					}
@@ -300,10 +300,10 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 	}
 
 	@Override
-	public boolean rangeCheck(boolean ignoreRange) {
+	public boolean rangeCheck(final boolean ignoreRange) {
 		sqRange = myRange = Double.MAX_VALUE;
 
-		if (targetGrid != null && itemStorage != null) {
+		if (targetGrid != null && objectStorage != null) {
 			if (myWap != null) {
 				if (myWap.getGrid() == targetGrid) {
 					if (this.testWap(myWap)) {
@@ -335,7 +335,7 @@ public class WTGuiObjectImpl<O extends IAEStack<O>, C extends IStorageChannel<O>
 	}
 
 	@Override
-	public boolean testWap(final IWirelessAccessPoint wap, boolean ignoreRange) {
+	public boolean testWap(final IWirelessAccessPoint wap, final boolean ignoreRange) {
 		double rangeLimit = wap.getRange();
 		rangeLimit *= rangeLimit;
 

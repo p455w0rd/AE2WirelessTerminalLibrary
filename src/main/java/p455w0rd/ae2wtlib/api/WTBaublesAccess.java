@@ -8,7 +8,7 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import p455w0rd.ae2wtlib.api.base.ContainerWT;
+import p455w0rd.ae2wtlib.api.container.ContainerWT;
 
 /**
  * @author p455w0rd

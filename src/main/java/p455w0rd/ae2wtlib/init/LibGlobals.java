@@ -1,23 +1,27 @@
 package p455w0rd.ae2wtlib.init;
 
+import net.minecraft.util.ResourceLocation;
 import p455w0rd.ae2wtlib.api.WTGlobals;
 
 public class LibGlobals extends WTGlobals {
 
 	public static final String MODID = "ae2wtlib";
-	public static final String VERSION = "1.0.7";
+	public static final String VERSION = "1.0.11";
 	public static final String NAME = "AE2 Wireless Terminal Library (AE2WTLib)";
 	public static final String SERVER_PROXY = "p455w0rd.ae2wtlib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rd.ae2wtlib.proxy.ClientProxy";
-	public static final String DEP_LIST = "required-after:appliedenergistics2@[rv6-stable-6,);required-after:p455w0rdslib@[2.0.36,);after:baubles";
+	public static final String DEP_LIST = "required-after:appliedenergistics2@[rv6-stable-6,);" + p455w0rdslib.LibGlobals.REQUIRE_DEP + ";after:baubles";
 	public static final String CONFIG_FILE = "config/AE2WirelessTerminals.cfg";
+	public static final String REQUIRE_DEP = "required-after:" + MODID + "@[" + VERSION + ",);";
+	private static final String ITEMGROUP_UNLOCALIZED_NAME = "itemGroup." + MODID;
+	private static final String INFINITY_BOOSTER_CARD_UNLOCALIZED_NAME = "item." + MODID + ":infinity_booster_card.name";
 
-	private static final String ITEMGROUP = "itemGroup." + MODID;
-	private static final String INFINITY_BOOSTER_CARD = "item." + MODID + ":infinity_booster_card.name";
+	private static final ResourceLocation STATES_TEXTURE = new ResourceLocation(MODID, "textures/gui/states.png");
 
 	private static final WTTooltips TOOLTIPS = new Tooltips();
+	private static final WTNBTTagNames TAG_NAMES = new NBTTagNames();
 
-	public static class Tooltips extends WTTooltips {
+	static class Tooltips extends WTTooltips {
 
 		private static final String INFINITE_RANGE = "tooltip.infinite_range.desc";
 		private static final String INFINITY_ENERGY = "tooltip.infinity_energy.desc";
@@ -119,6 +123,47 @@ public class LibGlobals extends WTGlobals {
 
 	}
 
+	private static class NBTTagNames extends WTNBTTagNames {
+
+		private static final String INFINITY_ENERGY_NBT = "InfinityEnergy";
+		private static final String BOOSTER_SLOT_NBT = "BoosterSlot";
+		private static final String IN_RANGE_NBT = "IsInRange";
+		private static final String AUTOCONSUME_BOOSTER_NBT = "AutoConsumeBoosters";
+		private static final String WT_ENCRYPTION_KEY = "encryptionKey";
+		private static final String WT_INTERNAL_POWER = "internalCurrentPower";
+
+		@Override
+		public String infinityEnergy() {
+			return INFINITY_ENERGY_NBT;
+		}
+
+		@Override
+		public String boosterSlot() {
+			return BOOSTER_SLOT_NBT;
+		}
+
+		@Override
+		public String inRange() {
+			return IN_RANGE_NBT;
+		}
+
+		@Override
+		public String autoConsumeBooster() {
+			return AUTOCONSUME_BOOSTER_NBT;
+		}
+
+		@Override
+		public String encryptionKey() {
+			return WT_ENCRYPTION_KEY;
+		}
+
+		@Override
+		public String internalCurrentPower() {
+			return WT_INTERNAL_POWER;
+		}
+
+	}
+
 	@Override
 	public String getModId() {
 		return MODID;
@@ -136,7 +181,7 @@ public class LibGlobals extends WTGlobals {
 
 	@Override
 	public String getItemGroup() {
-		return ITEMGROUP;
+		return ITEMGROUP_UNLOCALIZED_NAME;
 	}
 
 	@Override
@@ -145,8 +190,18 @@ public class LibGlobals extends WTGlobals {
 	}
 
 	@Override
-	public String boosterCard() {
-		return INFINITY_BOOSTER_CARD;
+	public WTNBTTagNames getNBTTagNames() {
+		return TAG_NAMES;
+	}
+
+	@Override
+	public String boosterCardUnlocalizedName() {
+		return INFINITY_BOOSTER_CARD_UNLOCALIZED_NAME;
+	}
+
+	@Override
+	public ResourceLocation getStatesTexture() {
+		return STATES_TEXTURE;
 	}
 
 }

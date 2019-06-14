@@ -11,18 +11,14 @@ import net.minecraft.client.gui.FontRenderer;
  *
  * Consolidated classes - p455w0rd
  *
- * @version rv6
- * @since rv6
+ * @version rv6-custom
+ * @since rv2
  */
 public abstract class StackSizeRenderer<T extends IAEStack<T>> {
 
 	public abstract void renderStackSize(FontRenderer fontRenderer, T aeStack, int xPos, int yPos);
 
-	public ISlimReadableNumberConverter getSlimConverter() {
-		return ReadableNumberConverter.INSTANCE;
-	}
-
-	public IWideReadableNumberConverter getWideConverter() {
+	public IReadableNumberConverter getConverter() {
 		return ReadableNumberConverter.INSTANCE;
 	}
 

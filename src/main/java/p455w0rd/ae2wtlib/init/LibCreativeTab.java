@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
 import p455w0rd.ae2wtlib.api.WTApi;
-import p455w0rd.ae2wtlib.items.ItemWT;
+import p455w0rd.ae2wtlib.api.item.ItemWT;
 
 /**
  * @author p455w0rd
@@ -29,16 +29,16 @@ public class LibCreativeTab extends CreativeTabs {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void displayAllRelevantItems(NonNullList<ItemStack> stackList) {
-		for (Item item : Item.REGISTRY) {
+	public void displayAllRelevantItems(final NonNullList<ItemStack> stackList) {
+		for (final Item item : Item.REGISTRY) {
 			item.getSubItems(this, stackList);
 		}
-		for (ICustomWirelessTerminalItem wirelessTerminal : WTApi.instance().getRegistry().getRegisteredTerminals()) {
-			ItemStack tmpStack = new ItemStack((ItemWT) wirelessTerminal);
+		for (final ICustomWirelessTerminalItem wirelessTerminal : WTApi.instance().getWirelessTerminalRegistry().getRegisteredTerminals()) {
+			final ItemStack tmpStack = new ItemStack((ItemWT) wirelessTerminal);
 			if (wirelessTerminal instanceof ItemWT) {
 				stackList.add(tmpStack);
 				if (!wirelessTerminal.isCreative()) {
-					ItemStack tmpStack2 = tmpStack.copy();
+					final ItemStack tmpStack2 = tmpStack.copy();
 					((AEBasePoweredItem) tmpStack2.getItem()).injectAEPower(tmpStack2, LibConfig.WT_MAX_POWER, Actionable.MODULATE);
 					stackList.add(tmpStack2);
 				}
@@ -48,8 +48,8 @@ public class LibCreativeTab extends CreativeTabs {
 
 	@Override
 	public ItemStack getIconItemStack() {
-		ItemStack is = new ItemStack(LibItems.BOOSTER_CARD);
-		//((AEBasePoweredItem) is.getItem()).injectAEPower(is, ModConfig.WT_MAX_POWER, Actionable.MODULATE);
+		final ItemStack is = new ItemStack(LibItems.ULTIMATE_TERMINAL);
+		((AEBasePoweredItem) is.getItem()).injectAEPower(is, WTApi.instance().getConfig().getWTMaxPower(), Actionable.MODULATE);
 		return is;
 	}
 

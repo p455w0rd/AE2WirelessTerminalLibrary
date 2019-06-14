@@ -1,8 +1,10 @@
 package p455w0rd.ae2wtlib.api.client.gui.widgets;
 
 import net.minecraft.client.renderer.GlStateManager;
-import p455w0rd.ae2wtlib.api.base.GuiWT;
+import net.minecraft.util.ResourceLocation;
 import p455w0rd.ae2wtlib.api.client.IWTGuiScrollbar;
+import p455w0rd.ae2wtlib.api.client.gui.GuiWT;
+import p455w0rd.ae2wtlib.init.LibGlobals;
 
 public class GuiScrollbar implements IWTGuiScrollbar {
 
@@ -18,15 +20,15 @@ public class GuiScrollbar implements IWTGuiScrollbar {
 
 	@Override
 	public void draw(final GuiWT g) {
-		g.bindTexture("minecraft", "gui/container/creative_inventory/tabs.png");
+		g.mc.renderEngine.bindTexture(new ResourceLocation(LibGlobals.MODID, "textures/gui/states.png"));
 		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 
 		if (getRange() == 0) {
-			g.drawTexturedModalRect(displayX, displayY, 232 + width, 0, width, 15);
+			g.drawTexturedModalRect(displayX, displayY, 18 + width, 241, width, 15);
 		}
 		else {
 			final int offset = (currentScroll - minScroll) * (height - 15) / getRange();
-			g.drawTexturedModalRect(displayX, offset + displayY, 232, 0, width, 15);
+			g.drawTexturedModalRect(displayX, offset + displayY, 18, 241, width, 15);
 		}
 	}
 
@@ -38,6 +40,7 @@ public class GuiScrollbar implements IWTGuiScrollbar {
 		return displayX;
 	}
 
+	@Override
 	public GuiScrollbar setLeft(final int v) {
 		displayX = v;
 		return this;
@@ -47,6 +50,7 @@ public class GuiScrollbar implements IWTGuiScrollbar {
 		return displayY;
 	}
 
+	@Override
 	public GuiScrollbar setTop(final int v) {
 		displayY = v;
 		return this;
@@ -65,11 +69,13 @@ public class GuiScrollbar implements IWTGuiScrollbar {
 		return height;
 	}
 
+	@Override
 	public GuiScrollbar setHeight(final int v) {
 		height = v;
 		return this;
 	}
 
+	@Override
 	public void setRange(final int min, final int max, final int pageSize) {
 		minScroll = min;
 		maxScroll = max;
@@ -91,6 +97,7 @@ public class GuiScrollbar implements IWTGuiScrollbar {
 		return currentScroll;
 	}
 
+	@Override
 	public void click(final GuiWT aeBaseGui, final int x, final int y) {
 		if (getRange() == 0) {
 			return;
@@ -98,14 +105,15 @@ public class GuiScrollbar implements IWTGuiScrollbar {
 
 		if (x > displayX && x <= displayX + width) {
 			if (y > displayY && y <= displayY + height) {
-				currentScroll = (y - displayY);
-				currentScroll = minScroll + ((currentScroll * 2 * getRange() / height));
-				currentScroll = (currentScroll + 1) >> 1;
+				currentScroll = y - displayY;
+				currentScroll = minScroll + currentScroll * 2 * getRange() / height;
+				currentScroll = currentScroll + 1 >> 1;
 				applyRange();
 			}
 		}
 	}
 
+	@Override
 	public void wheel(int delta) {
 		delta = Math.max(Math.min(-delta, 1), -1);
 		currentScroll += delta * pageSize;
