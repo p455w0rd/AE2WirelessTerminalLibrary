@@ -15,7 +15,10 @@ import p455w0rdslib.api.client.IModelHolder;
  * @author p455w0rd
  *
  */
-@Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = "redstoneflux")
+@Optional.InterfaceList({ //@formatter:off
+		@Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = "redstoneflux", striprefs = true),
+		@Optional.Interface(iface = "p455w0rd.ae2wtlib.api.client.IBaubleItem", modid = "baubles", striprefs = true)
+})//@formatter:on
 public interface ICustomWirelessTerminalItem extends IWirelessTermHandler, IAEItemPowerStorage, IEnergyContainerItem, IBaubleItem, IModelHolder {
 
 	/**

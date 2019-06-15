@@ -1,5 +1,7 @@
 package p455w0rd.ae2wtlib.init;
 
+import java.util.List;
+
 import appeng.api.config.Actionable;
 import appeng.items.tools.powered.powersink.AEBasePoweredItem;
 import net.minecraft.creativetab.CreativeTabs;
@@ -24,16 +26,15 @@ public class LibCreativeTab extends CreativeTabs {
 		super(LibGlobals.MODID);
 	}
 
-	public static void preInit() {
-	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void displayAllRelevantItems(final NonNullList<ItemStack> stackList) {
 		for (final Item item : Item.REGISTRY) {
 			item.getSubItems(this, stackList);
 		}
-		for (final ICustomWirelessTerminalItem wirelessTerminal : WTApi.instance().getWirelessTerminalRegistry().getRegisteredTerminals()) {
+		final List<? extends ICustomWirelessTerminalItem> list = WTApi.instance().getWirelessTerminalRegistry().getRegisteredTerminals();
+		//if (list.size() > 1) {
+		for (final ICustomWirelessTerminalItem wirelessTerminal : list) {
 			final ItemStack tmpStack = new ItemStack((ItemWT) wirelessTerminal);
 			if (wirelessTerminal instanceof ItemWT) {
 				stackList.add(tmpStack);
@@ -44,11 +45,13 @@ public class LibCreativeTab extends CreativeTabs {
 				}
 			}
 		}
+		//}
 	}
 
 	@Override
 	public ItemStack getIconItemStack() {
-		final ItemStack is = new ItemStack(LibItems.ULTIMATE_TERMINAL);
+		ItemStack is = ItemStack.EMPTY;
+		is = new ItemStack(LibItems.ULTIMATE_TERMINAL);
 		((AEBasePoweredItem) is.getItem()).injectAEPower(is, WTApi.instance().getConfig().getWTMaxPower(), Actionable.MODULATE);
 		return is;
 	}

@@ -13,7 +13,6 @@ import p455w0rd.ae2wtlib.AE2WTLib;
 import p455w0rd.ae2wtlib.api.*;
 import p455w0rd.ae2wtlib.api.item.ItemWT;
 import p455w0rd.ae2wtlib.recipe.RecipeNewTerminal;
-import p455w0rdslib.api.client.ItemRenderingRegistry;
 
 /**
  * @author p455w0rd
@@ -49,7 +48,7 @@ public class LibWTRegistry extends WTRegistry {
 			}
 			addNewRecipes(wirelessTerminal);
 			getRegisteredTerminals().add(wirelessTerminal);
-			ItemRenderingRegistry.registerCustomRenderingItem(wirelessTerminal);
+			AE2WTLib.PROXY.registerCustomRenderer(wirelessTerminal);
 		}
 	}
 
