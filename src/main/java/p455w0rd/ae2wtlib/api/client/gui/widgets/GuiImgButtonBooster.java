@@ -38,7 +38,7 @@ public class GuiImgButtonBooster extends GuiButton implements ITooltip {
 	public void drawButton(final Minecraft mc, final int mouseX, final int mouseY, final float partial) {
 		if (visible) {
 			hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
-			mc.renderEngine.bindTexture(new ResourceLocation(wirelessTerminal.getItem().getRegistryName().getResourceDomain(), "textures/gui/states.png"));
+			mc.renderEngine.bindTexture(new ResourceLocation(WTApi.instance().getConstants().getModId(), "textures/gui/states.png"));
 			this.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 			this.drawTexturedModalRect(x, y, (!getCurrentValue() ? 3 : 2) * 16, 0, 16, 16);
 			mouseDragged(mc, mouseX, mouseY);
