@@ -64,7 +64,7 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 			}
 			final List<Pair<ItemStack, Integer>> installedTerminals = WTApi.instance().getWUTUtility().getStoredTerminals(wut);
 			if (!installedTerminals.isEmpty()) {
-				list.add(1, TextFormatting.UNDERLINE + "      Installed Modules      ");
+				list.add(1, TextFormatting.UNDERLINE + "      Installed Modules      ");
 				if (!Keyboard.isKeyDown(42) && !Keyboard.isKeyDown(54)) {
 					list.add(2, "Press Shift");
 				}

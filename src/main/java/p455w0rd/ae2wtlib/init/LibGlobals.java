@@ -6,7 +6,7 @@ import p455w0rd.ae2wtlib.api.WTGlobals;
 public class LibGlobals extends WTGlobals {
 
 	public static final String MODID = "ae2wtlib";
-	public static final String VERSION = "1.0.24";
+	public static final String VERSION = "1.0.26";
 	public static final String NAME = "AE2 Wireless Terminal Library (AE2WTLib)";
 	public static final String SERVER_PROXY = "p455w0rd.ae2wtlib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rd.ae2wtlib.proxy.ClientProxy";
