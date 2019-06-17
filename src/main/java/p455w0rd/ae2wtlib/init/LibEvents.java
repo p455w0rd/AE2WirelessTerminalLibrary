@@ -67,7 +67,7 @@ public class LibEvents {
 			final TileController controller = (TileController) event.getObject();
 			event.addCapability(new ResourceLocation(LibGlobals.MODID, "chunkloader"), new ProviderTE(controller));
 		}
-		if (WTApi.instance().getConfig().areShadersEnabled() && event.getObject() instanceof TileCharger) {
+		if (WTApi.instance() != null && WTApi.instance().getConfig() != null && WTApi.instance().getConfig().areShadersEnabled() && event.getObject() instanceof TileCharger) {
 			final TileCharger charger = (TileCharger) event.getObject();
 			event.addCapability(new ResourceLocation(LibGlobals.MODID, "pw_light"), PwLib.getChargerProvider(charger));
 		}
