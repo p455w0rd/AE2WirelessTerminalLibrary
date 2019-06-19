@@ -1,15 +1,13 @@
-# AE2 Wireless Terminal Library
-
+AE2 Wireless Terminal Library
+=============================
 This is a library and API which allows for easy addition of Infinite range-capable Wireless Terminals for AE2 with built-in Baubles support.
 
 The current API implementation is kinda bloated for a full implementation which includes Infinity Booster support, and I do plan to make things simpler in time.
 
 Several things have to fall into place in order for your terminal to function properly and be compatible with WUT (Wireless Universal Terminal), so I'll break this up into sections labeled with their respective classes.
 
-
-##API
-
-###Gradle
+## API
+### Gradle
 The required libraries are available on Maven.
 Add the following to your build.gradle to have them and necessary dependencies automatically imported into your project:
 
@@ -31,7 +29,7 @@ Add the following to your build.gradle to have them and necessary dependencies a
         deobfCompile "baubles:Baubles:1.12:1.5.2"
     }
 
-###Item
+### Item
 
 * Your item should implement a custom interface which extends `p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem`
 
@@ -42,7 +40,7 @@ I recommend overriding `ICustomWirelessTerminalItem#getStorageChannel` using a d
 * Your item should also extend **`p455w0rd.ae2wtlib.api.item.ItemWT`** which is an abstract implementation of a general wireless terminal which adds support for internal rendering.
 Check [this](https://github.com/p455w0rd/WirelessCraftingTerminal/blob/f5cb620eaf755f4ffaf32b4279b30accd3a8ce3e/src/main/java/p455w0rd/wct/items/ItemWCT.java) for an example of what should be overridden
 
-###Container
+### Container
 
 * Your container should extend **`p455w0rd.ae2wtlib.api.container.ContainerWT`**. In the constructor of your container, you will need to call **`ContainerWT#setTerminalHost`**. [Example](https://github.com/p455w0rd/WirelessCraftingTerminal/blob/f5cb620eaf755f4ffaf32b4279b30accd3a8ce3e/src/main/java/p455w0rd/wct/container/ContainerWCT.java#L104)
 
@@ -52,7 +50,7 @@ Check [this](https://github.com/p455w0rd/WirelessCraftingTerminal/blob/f5cb620ea
 
 * I have included a trash slot for convenience. When adding slots, call **`ContainerWT#addSlotToContainer(WTApi.instance().createTrashSlot(trashInventory, xPos, yPos));`**
 
-###GUI
+### GUI
 
 * Your GUI should extend **`p455w0rd.ae2wtlib.api.client.gui.GuiWT`** to ensure Compatibility with the **Wireless Universal Terminal**
 
