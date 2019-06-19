@@ -127,19 +127,23 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 	public void openGui(final EntityPlayer player, final boolean isBauble, final int playerSlot) {
 		final ItemStack heldStack = player.inventory.getCurrentItem();
 		if (heldStack.getItem() instanceof ItemWUT) {
-			final ICustomWirelessTerminalItem terminalItem = getSelectedTerminalHandler(heldStack).getLeft();
-			if (terminalItem != null) {
-				selectedTerminal = terminalItem;
+			final Pair<ICustomWirelessTerminalItem, Integer> handler = getSelectedTerminalHandler(heldStack);
+			if (handler != null) {
+				final ICustomWirelessTerminalItem terminalItem = handler.getLeft();
+				if (terminalItem != null) {
+					terminalItem.openGui(player, isBauble, playerSlot);
+				}
 			}
 		}
-		selectedTerminal.openGui(player, isBauble, playerSlot);
 	}
 
 	public static List<Pair<ICustomWirelessTerminalItem, Integer>> getStoredTerminalHandlers(final ItemStack wut) {
 		final List<Pair<ItemStack, Integer>> t = getStoredTerminalStacks(wut);
 		final List<Pair<ICustomWirelessTerminalItem, Integer>> c = new ArrayList<>();
 		for (int i = 0; i < t.size(); i++) {
-			c.add(Pair.of((ICustomWirelessTerminalItem) t.get(i).getLeft().getItem(), t.get(i).getRight()));
+			if (!(c.get(i).getLeft() instanceof ICustomWirelessTerminalItem)) {
+				c.add(Pair.of((ICustomWirelessTerminalItem) t.get(i).getLeft().getItem(), t.get(i).getRight()));
+			}
 		}
 		return c;
 	}
