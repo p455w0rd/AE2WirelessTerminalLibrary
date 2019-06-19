@@ -7,8 +7,9 @@ The current API implementation is kinda bloated for a full implementation which 
 Several things have to fall into place in order for your terminal to function properly and be compatible with WUT (Wireless Universal Terminal), so I'll break this up into sections labeled with their respective classes.
 
 
-#API
-##Gradle
+##API
+
+###Gradle
 The required libraries are available on Maven.
 Add the following to your build.gradle to have them and necessary dependencies automatically imported into your project:
 
@@ -30,7 +31,8 @@ Add the following to your build.gradle to have them and necessary dependencies a
         deobfCompile "baubles:Baubles:1.12:1.5.2"
     }
 
-##Item
+###Item
+
 * Your item should implement a custom interface which extends `p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem`
 
 I recommend overriding `ICustomWirelessTerminalItem#getStorageChannel` using a default implementation inside this custom interface. [Example](https://github.com/p455w0rd/WirelessCraftingTerminal/blob/f5cb620eaf755f4ffaf32b4279b30accd3a8ce3e/src/main/java/p455w0rd/wct/api/IWirelessCraftingTerminalItem.java#L32)
@@ -40,7 +42,8 @@ I recommend overriding `ICustomWirelessTerminalItem#getStorageChannel` using a d
 * Your item should also extend **`p455w0rd.ae2wtlib.api.item.ItemWT`** which is an abstract implementation of a general wireless terminal which adds support for internal rendering.
 Check [this](https://github.com/p455w0rd/WirelessCraftingTerminal/blob/f5cb620eaf755f4ffaf32b4279b30accd3a8ce3e/src/main/java/p455w0rd/wct/items/ItemWCT.java) for an example of what should be overridden
 
-##Container
+###Container
+
 * Your container should extend **`p455w0rd.ae2wtlib.api.container.ContainerWT`**. In the constructor of your container, you will need to call **`ContainerWT#setTerminalHost`**. [Example](https://github.com/p455w0rd/WirelessCraftingTerminal/blob/f5cb620eaf755f4ffaf32b4279b30accd3a8ce3e/src/main/java/p455w0rd/wct/container/ContainerWCT.java#L104)
 
 * If you wish to make use of the **Infinity Booster Card** functionality, you should call the **`ContainerWT#<init>(Lnet.minecraft.entity.player.InventoryPlayer;Ljava.lang.Object;ISSII)V`** super constructor, where the final 3 parameters should be `true (enable the booster slot), slotXPos, slotYPos`.
@@ -49,7 +52,8 @@ Check [this](https://github.com/p455w0rd/WirelessCraftingTerminal/blob/f5cb620ea
 
 * I have included a trash slot for convenience. When adding slots, call **`ContainerWT#addSlotToContainer(WTApi.instance().createTrashSlot(trashInventory, xPos, yPos));`**
 
-##GUI
+###GUI
+
 * Your GUI should extend **`p455w0rd.ae2wtlib.api.client.gui.GuiWT`** to ensure Compatibility with the **Wireless Universal Terminal**
 
 * If you wish to add Config buttons (buttons along the left side of the GUI), you should add them in **`GuiContainer#initGui`** via the **`GuiButtonPanel#addButton`** method. Current **`GuiButtonPanel`** instance can be gotten from **`GuiWT#getButtonPanel`**. In your **`initGui`** method, you must also call **`super.initGui()`** prior to adding buttons to the panel to initialize the main ButtonPanel. This is necessary for WUT support.
