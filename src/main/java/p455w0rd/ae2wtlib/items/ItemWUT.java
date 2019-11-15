@@ -57,15 +57,20 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 	public void getCheckedSubItems(final CreativeTabs tab, final NonNullList<ItemStack> stacks) {
 		if (!isCreative()) {
 			final ItemStack wut = getFullyStockedWut(false);
-			WTApi.instance().setInfinityEnergy(wut, 0);
-			stacks.add(wut);
 			final ItemStack wutPowered = wut.copy();
-			((AEBasePoweredItem) wutPowered.getItem()).injectAEPower(wutPowered, LibConfig.WT_MAX_POWER, Actionable.MODULATE);
-			WTApi.instance().setInfinityEnergy(wutPowered, Integer.MAX_VALUE);
-			stacks.add(wutPowered);
+			if (!wut.isEmpty() && WTApi.instance().getWUTUtility().isWUT(wut)) {
+				WTApi.instance().setInfinityEnergy(wut, 0);
+				stacks.add(wut);
+				((AEBasePoweredItem) wutPowered.getItem()).injectAEPower(wutPowered, LibConfig.WT_MAX_POWER, Actionable.MODULATE);
+				WTApi.instance().setInfinityEnergy(wutPowered, Integer.MAX_VALUE);
+				stacks.add(wutPowered);
+			}
 		}
 		else {
-			stacks.add(getFullyStockedWut(true));
+			final ItemStack wut = getFullyStockedWut(true);
+			if (!wut.isEmpty()) {
+				stacks.add(wut);
+			}
 		}
 	}
 

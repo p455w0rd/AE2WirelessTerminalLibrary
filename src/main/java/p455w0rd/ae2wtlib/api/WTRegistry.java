@@ -11,7 +11,11 @@ import net.minecraft.item.ItemStack;
  */
 public abstract class WTRegistry {
 
-	public abstract List<? extends ICustomWirelessTerminalItem> getRegisteredTerminals();
+	public abstract List<ICustomWirelessTerminalItem> getRegisteredTerminals();
+
+	public abstract List<ICustomWirelessTerminalItem> getRegisteredTerminals(boolean excludeWUT);
+
+	public abstract int getNumRegisteredTerminals(boolean excludeWUT);
 
 	public abstract <T extends ICustomWirelessTerminalItem, C extends T> void registerWirelessTerminal(T wirelessTerminal, C creativeTerminal);
 
@@ -20,5 +24,7 @@ public abstract class WTRegistry {
 	public abstract ItemStack convertToCreative(ItemStack wirelessTerminal);
 
 	public abstract Map<ICustomWirelessTerminalItem, ICustomWirelessTerminalItem> getNonCreativeToCreativeMap();
+
+	public abstract ItemStack getStackForHandler(Class<? extends ICustomWirelessTerminalItem> clazz, boolean creative, boolean fullyPower);
 
 }

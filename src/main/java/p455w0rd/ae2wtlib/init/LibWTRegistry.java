@@ -5,7 +5,9 @@ import java.util.*;
 import com.google.common.collect.Lists;
 
 import appeng.api.AEApi;
+import appeng.api.config.Actionable;
 import appeng.api.features.IWirelessTermHandler;
+import appeng.items.tools.powered.powersink.AEBasePoweredItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +16,7 @@ import net.minecraftforge.fml.common.LoaderState;
 import p455w0rd.ae2wtlib.AE2WTLib;
 import p455w0rd.ae2wtlib.api.*;
 import p455w0rd.ae2wtlib.api.item.ItemWT;
+import p455w0rd.ae2wtlib.helpers.IWirelessUniversalItem;
 import p455w0rd.ae2wtlib.recipe.RecipeNewTerminal;
 
 /**
@@ -27,12 +30,53 @@ public class LibWTRegistry extends WTRegistry {
 
 	@Override
 	public List<ICustomWirelessTerminalItem> getRegisteredTerminals() {
+		return getRegisteredTerminals(false);
+	}
+
+	@Override
+	public List<ICustomWirelessTerminalItem> getRegisteredTerminals(final boolean excludeWUT) {
+		if (excludeWUT) {
+			final List<ICustomWirelessTerminalItem> tmpList = Lists.newArrayList(WT_REGISTRY);
+			final Iterator<ICustomWirelessTerminalItem> listIterator = tmpList.iterator();
+			while (listIterator.hasNext()) {
+				final ICustomWirelessTerminalItem currentTerminal = listIterator.next();
+				if (currentTerminal instanceof IWirelessUniversalItem) {
+					listIterator.remove();
+				}
+			}
+			return tmpList;
+		}
 		return WT_REGISTRY;
 	}
 
 	@Override
 	public Map<ICustomWirelessTerminalItem, ICustomWirelessTerminalItem> getNonCreativeToCreativeMap() {
 		return WT_TO_CREATIVE;
+	}
+
+	@Override
+	public int getNumRegisteredTerminals(final boolean excludeWUT) {
+		return getNonCreativeToCreativeMap().size() - (excludeWUT ? 1 : 0);
+	}
+
+	@Override
+	public ItemStack getStackForHandler(final Class<? extends ICustomWirelessTerminalItem> clazz, final boolean creative, final boolean fullyPower) {
+		for (final Map.Entry<ICustomWirelessTerminalItem, ICustomWirelessTerminalItem> entry : getNonCreativeToCreativeMap().entrySet()) {
+			final ICustomWirelessTerminalItem currentHandler = entry.getKey();
+			if (currentHandler instanceof Item) {
+				if (currentHandler.getClass().equals(clazz)) {
+					if (creative) {
+						return new ItemStack((Item) entry.getValue());
+					}
+					final ItemStack terminal = new ItemStack((Item) currentHandler);
+					if (fullyPower) {
+						((AEBasePoweredItem) terminal.getItem()).injectAEPower(terminal, LibConfig.WT_MAX_POWER, Actionable.MODULATE);
+					}
+					return terminal;
+				}
+			}
+		}
+		return ItemStack.EMPTY;
 	}
 
 	@Override
