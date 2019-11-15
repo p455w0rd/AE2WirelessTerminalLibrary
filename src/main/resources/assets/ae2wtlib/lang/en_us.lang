@@ -1,6 +1,7 @@
 // Items
 item.ae2wtlib:infinity_booster_card.name=Infinity Booster Card
 item.ae2wtlib:wut.name=Wireless Ultimate Terminal
+item.ae2wtlib:wut_creative.name=Creative Wireless Ultimate Terminal
 
 // Creative Tab
 itemGroup.ae2wtlib=AE2 Wireless Terminals (AE2WTLib)
@@ -21,6 +22,7 @@ tooltip.active.desc=Active
 tooltip.inactive.desc=Inactive
 tooltip.not.desc=Not
 tooltip.units.desc=Units
+tooltip.link_status=Link Status
 
 // GUI
 gui.emptytrash=Empty Trash

@@ -22,12 +22,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
-import p455w0rd.ae2wtlib.init.LibGlobals;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.init.LibItems;
 
 public class SlotBooster extends AppEngSlot implements IBoosterSlot {
 
-	public SlotBooster(IItemHandler inv, int xPos, int yPos) {
+	public SlotBooster(final IItemHandler inv, final int xPos, final int yPos) {
 		super(inv, 0, xPos, yPos);
 	}
 
@@ -37,8 +37,8 @@ public class SlotBooster extends AppEngSlot implements IBoosterSlot {
 	}
 
 	@Override
-	public boolean isItemValid(ItemStack is) {
-		return !is.isEmpty() && (is.getItem() == LibItems.BOOSTER_CARD);
+	public boolean isItemValid(final ItemStack is) {
+		return !is.isEmpty() && is.getItem() == LibItems.BOOSTER_CARD;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class SlotBooster extends AppEngSlot implements IBoosterSlot {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public ResourceLocation getBackgroundLocation() {
-		return new ResourceLocation(LibGlobals.MODID, "textures/gui/booster_slot.png");
+		return new ResourceLocation(WTApi.MODID, "textures/gui/booster_slot.png");
 	}
 
 }

@@ -12,7 +12,6 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import p455w0rd.ae2wtlib.api.*;
-import p455w0rd.ae2wtlib.init.LibGlobals;
 import p455w0rd.ae2wtlib.init.LibRecipes;
 import p455w0rd.ae2wtlib.items.ItemWUT;
 
@@ -31,7 +30,7 @@ public class RecipeNewTerminal extends net.minecraftforge.registries.IForgeRegis
 	ItemStack terminalB = ItemStack.EMPTY;
 	ItemStack output = ItemStack.EMPTY;
 
-	private RecipeNewTerminal(ItemStack terminalA, ItemStack terminalB) {
+	private RecipeNewTerminal(final ItemStack terminalA, final ItemStack terminalB) {
 		this.terminalA = terminalA;
 		this.terminalB = terminalB;
 	}
@@ -40,14 +39,18 @@ public class RecipeNewTerminal extends net.minecraftforge.registries.IForgeRegis
 		return REGISTRY;
 	}
 
-	public static RecipeNewTerminal[] getRecipes() {
-		return getRegistry().toArray(new RecipeNewTerminal[getRegistry().size()]);
+	public static List<RecipeNewTerminal> getRecipes() {
+		return getRegistry();
 	}
 
-	public static void addRecipe(ItemStack terminalA, ItemStack terminalB) {
-		RecipeNewTerminal newRecipe = (RecipeNewTerminal) new RecipeNewTerminal(terminalA, terminalB).setRegistryName(LibGlobals.MODID, "wut_new_" + c++);
-		List<IWUTRecipe> registry = new ArrayList<>();
-		for (RecipeNewTerminal r : getRegistry()) {
+	public static RecipeNewTerminal[] getRecipesArray() {
+		return getRecipes().toArray(new RecipeNewTerminal[getRecipes().size()]);
+	}
+
+	public static void addRecipe(final ItemStack terminalA, final ItemStack terminalB) {
+		final RecipeNewTerminal newRecipe = (RecipeNewTerminal) new RecipeNewTerminal(terminalA, terminalB).setRegistryName(WTApi.MODID, "wut_new_" + c++);
+		final List<IWUTRecipe> registry = new ArrayList<>();
+		for (final RecipeNewTerminal r : getRegistry()) {
 			registry.add(r);
 		}
 		if (!LibRecipes.isRecipeRegistered(registry, newRecipe) && !LibRecipes.isEitherWut(terminalA, terminalB) && !LibRecipes.isEitherCreative(terminalA, terminalB)) {
@@ -56,7 +59,7 @@ public class RecipeNewTerminal extends net.minecraftforge.registries.IForgeRegis
 	}
 
 	@Override
-	public boolean isSame(IWUTRecipe recipe) {
+	public boolean isSame(final IWUTRecipe recipe) {
 		return LibRecipes.areStacksEqual(getTerminalA(), recipe.getTerminalA()) && LibRecipes.areStacksEqual(getTerminalB(), recipe.getTerminalB());
 	}
 
@@ -72,7 +75,7 @@ public class RecipeNewTerminal extends net.minecraftforge.registries.IForgeRegis
 
 	@Override
 	public String getGroup() {
-		return LibGlobals.MODID + ":wut_new";
+		return WTApi.MODID + ":wut_new";
 	}
 
 	@Override
@@ -81,11 +84,11 @@ public class RecipeNewTerminal extends net.minecraftforge.registries.IForgeRegis
 	}
 
 	@Override
-	public boolean matches(InventoryCrafting inv, World world) {
-		List<ItemStack> inputs = Lists.newArrayList();
+	public boolean matches(final InventoryCrafting inv, final World world) {
+		final List<ItemStack> inputs = Lists.newArrayList();
 		for (int i = 0; i < inv.getHeight(); ++i) {
 			for (int j = 0; j < inv.getWidth(); ++j) {
-				ItemStack itemstack = inv.getStackInRowAndColumn(j, i);
+				final ItemStack itemstack = inv.getStackInRowAndColumn(j, i);
 				if (!itemstack.isEmpty()) {
 					inputs.add(itemstack);
 				}
@@ -94,7 +97,7 @@ public class RecipeNewTerminal extends net.minecraftforge.registries.IForgeRegis
 		if (inputs.size() == 2) {
 			//terminalA = inputs.get(0).copy();
 			//terminalB = inputs.get(1).copy();
-			boolean notWut = !WTApi.instance().getWUTUtility().isWUT(inputs.get(0)) && !WTApi.instance().getWUTUtility().isWUT(inputs.get(1));
+			final boolean notWut = !WTApi.instance().getWUTUtility().isWUT(inputs.get(0)) && !WTApi.instance().getWUTUtility().isWUT(inputs.get(1));
 			if (inputs.get(0).getItem() instanceof ICustomWirelessTerminalItem && inputs.get(1).getItem() instanceof ICustomWirelessTerminalItem && inputs.get(0).getItem() != inputs.get(1).getItem() && notWut) {
 				output = ItemWUT.createNewWUT(inputs.get(0), inputs.get(1));
 				//inv.clear();
@@ -108,19 +111,19 @@ public class RecipeNewTerminal extends net.minecraftforge.registries.IForgeRegis
 	}
 
 	@Override
-	public ItemStack getCraftingResult(InventoryCrafting inv) {
+	public ItemStack getCraftingResult(final InventoryCrafting inv) {
 		matches(inv, null);
 		return output;
 	}
 
 	@Override
-	public boolean canFit(int width, int height) {
+	public boolean canFit(final int width, final int height) {
 		return width * height >= 2;
 	}
 
 	@Override
 	public NonNullList<Ingredient> getIngredients() {
-		NonNullList<Ingredient> list = NonNullList.create();
+		final NonNullList<Ingredient> list = NonNullList.create();
 		list.add(Ingredient.fromStacks(terminalA));
 		list.add(Ingredient.fromStacks(terminalB));
 		return list;

@@ -13,7 +13,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.api.container.ContainerWT;
-import p455w0rd.ae2wtlib.init.*;
+import p455w0rd.ae2wtlib.init.LibItems;
+import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 
 /**
@@ -24,9 +25,9 @@ public class SlotBoosterEnergy extends AppEngSlot {
 
 	private AEBaseContainer thisContainer;
 
-	public SlotBoosterEnergy(int xPos, int yPos) {
+	public SlotBoosterEnergy(final int xPos, final int yPos) {
 		super(null, 0, xPos, yPos);
-		ResourceLocation rl = new ResourceLocation(LibGlobals.MODID, "textures/gui/booster_slot.png");
+		final ResourceLocation rl = new ResourceLocation(WTApi.MODID, "textures/gui/booster_slot.png");
 		//setBackgroundLocation(rl);
 		//setBackgroundName(LibGlobals.MODID + ":gui/booster_slot");
 		setIIcon(4);
@@ -38,8 +39,8 @@ public class SlotBoosterEnergy extends AppEngSlot {
 	}
 
 	@Override
-	public boolean isItemValid(ItemStack is) {
-		return !is.isEmpty() && (is.getItem() == LibItems.BOOSTER_CARD);
+	public boolean isItemValid(final ItemStack is) {
+		return !is.isEmpty() && is.getItem() == LibItems.BOOSTER_CARD;
 	}
 
 	@Override
@@ -63,10 +64,10 @@ public class SlotBoosterEnergy extends AppEngSlot {
 	public void putStack(final ItemStack stack) {
 		if (thisContainer != null) {
 			if (thisContainer instanceof ContainerWT) {
-				ContainerWT c = (ContainerWT) thisContainer;
+				final ContainerWT c = (ContainerWT) thisContainer;
 				WTApi.instance().addInfinityBoosters(c.getWirelessTerminal(), stack);
 				c.detectAndSendChanges();
-				for (IContainerListener listener : c.getListeners()) {
+				for (final IContainerListener listener : c.getListeners()) {
 					if (listener instanceof EntityPlayerMP) {
 						LibNetworking.instance().sendTo(new PacketSyncInfinityEnergy(WTApi.instance().getInfinityEnergy(((ContainerWT) thisContainer).getWirelessTerminal()), ((EntityPlayerMP) listener).getUniqueID(), false, -1), (EntityPlayerMP) listener);
 					}

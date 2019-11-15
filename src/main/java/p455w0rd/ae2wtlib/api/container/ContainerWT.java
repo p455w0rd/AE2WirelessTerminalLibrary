@@ -35,8 +35,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import p455w0rd.ae2wtlib.api.*;
-import p455w0rd.ae2wtlib.api.container.slot.SlotBooster;
-import p455w0rd.ae2wtlib.api.container.slot.SlotBoosterEnergy;
+import p455w0rd.ae2wtlib.api.container.slot.*;
 import p455w0rd.ae2wtlib.api.container.slot.SlotPlayerHotBar;
 import p455w0rd.ae2wtlib.api.container.slot.SlotPlayerInv;
 import p455w0rd.ae2wtlib.api.inventory.WTInventoryBooster;
@@ -423,6 +422,17 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 			else {
 				addSlotToContainer(new SlotPlayerHotBar(ih, i, i * 18 + offsetX, offsetY + 58));
 			}
+		}
+	}
+
+	protected void bindOffhandSlot(final InventoryPlayer inventory, final int offsetX, final int offsetY) {
+		final IItemHandler ih = new PlayerInvWrapper(inventory);
+		final HashSet<Integer> locked = ReflectionHelper.getPrivateValue(AEBaseContainer.class, this, "locked");
+		if (locked.contains(40)) {
+			addSlotToContainer(new SlotDisabled(ih, 40, offsetX, offsetY));
+		}
+		else {
+			addSlotToContainer(new SlotOffhand(inventory, offsetX, offsetY));
 		}
 	}
 

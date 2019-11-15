@@ -1,22 +1,19 @@
 package p455w0rd.ae2wtlib.init;
 
 import net.minecraft.util.ResourceLocation;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.api.WTGlobals;
 
 public class LibGlobals extends WTGlobals {
 
-	public static final String MODID = "ae2wtlib";
-	public static final String VERSION = "1.0.29";
 	public static final String NAME = "AE2 Wireless Terminal Library (AE2WTLib)";
 	public static final String SERVER_PROXY = "p455w0rd.ae2wtlib.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rd.ae2wtlib.proxy.ClientProxy";
-	public static final String DEP_LIST = "required-after:appliedenergistics2@[rv6-stable-6,);" + p455w0rdslib.LibGlobals.REQUIRE_DEP + ";after:baubles";
 	public static final String CONFIG_FILE = "config/AE2WirelessTerminals.cfg";
-	public static final String REQUIRE_DEP = "required-after:" + MODID + "@[" + VERSION + ",);";
-	private static final String ITEMGROUP_UNLOCALIZED_NAME = "itemGroup." + MODID;
-	private static final String INFINITY_BOOSTER_CARD_UNLOCALIZED_NAME = "item." + MODID + ":infinity_booster_card.name";
+	private static final String ITEMGROUP_UNLOCALIZED_NAME = "itemGroup." + WTApi.MODID;
+	private static final String INFINITY_BOOSTER_CARD_UNLOCALIZED_NAME = "item." + WTApi.MODID + ":infinity_booster_card.name";
 
-	private static final ResourceLocation STATES_TEXTURE = new ResourceLocation(MODID, "textures/gui/states.png");
+	private static final ResourceLocation STATES_TEXTURE = new ResourceLocation(WTApi.MODID, "textures/gui/states.png");
 
 	private static final WTTooltips TOOLTIPS = new Tooltips();
 	private static final WTNBTTagNames TAG_NAMES = new NBTTagNames();
@@ -166,7 +163,7 @@ public class LibGlobals extends WTGlobals {
 
 	@Override
 	public String getModId() {
-		return MODID;
+		return WTApi.MODID;
 	}
 
 	@Override
@@ -176,7 +173,7 @@ public class LibGlobals extends WTGlobals {
 
 	@Override
 	public String getModVersion() {
-		return VERSION;
+		return WTApi.VERSION;
 	}
 
 	@Override

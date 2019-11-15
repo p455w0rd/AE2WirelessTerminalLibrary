@@ -1,7 +1,6 @@
 package p455w0rd.ae2wtlib.items;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,12 +9,14 @@ import org.lwjgl.input.Keyboard;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import appeng.api.config.Actionable;
 import appeng.api.features.IWirelessTermHandler;
 import appeng.api.implementations.items.IAEItemPowerStorage;
 import appeng.api.storage.IStorageChannel;
 import appeng.api.util.IConfigManager;
 import appeng.items.tools.powered.powersink.AEBasePoweredItem;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.ae2wtlib.AE2WTLib;
 import p455w0rd.ae2wtlib.api.ICustomWirelessTerminalItem;
 import p455w0rd.ae2wtlib.api.WTApi;
+import p455w0rd.ae2wtlib.api.container.IWTContainer;
 import p455w0rd.ae2wtlib.api.item.ItemWT;
 import p455w0rd.ae2wtlib.helpers.IWirelessUniversalItem;
 import p455w0rd.ae2wtlib.init.*;
@@ -42,10 +44,29 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 
 	private static final String STOREDTERMINALS_KEY = "StoredTerminals";
 	private static final String SELECTEDTERMINAL_KEY = "SelectedTerminal";
-	private ICustomWirelessTerminalItem selectedTerminal;
 
 	public ItemWUT() {
-		super(new ResourceLocation(LibGlobals.MODID, "wut"));
+		this(new ResourceLocation(WTApi.MODID, "wut"));
+	}
+
+	protected ItemWUT(final ResourceLocation registryName) {
+		super(registryName);
+	}
+
+	@Override
+	public void getCheckedSubItems(final CreativeTabs tab, final NonNullList<ItemStack> stacks) {
+		if (!isCreative()) {
+			final ItemStack wut = getFullyStockedWut(false);
+			WTApi.instance().setInfinityEnergy(wut, 0);
+			stacks.add(wut);
+			final ItemStack wutPowered = wut.copy();
+			((AEBasePoweredItem) wutPowered.getItem()).injectAEPower(wutPowered, LibConfig.WT_MAX_POWER, Actionable.MODULATE);
+			WTApi.instance().setInfinityEnergy(wutPowered, Integer.MAX_VALUE);
+			stacks.add(wutPowered);
+		}
+		else {
+			stacks.add(getFullyStockedWut(true));
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -110,14 +131,6 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 				if (world.isRemote) {
 					player.openGui(AE2WTLib.INSTANCE, 0, world, 0, 0, 0);
 				}
-				/*
-				cycleSelectedTerminal(item);
-				Pair<ICustomWirelessTerminalItem, Integer> selectedItem = getSelectedTerminalHandler(item);
-				if (!world.isRemote && selectedItem != null) {
-					ItemStack selectedTerm = getSelectedTerminalStack(item).getLeft();
-					player.sendMessage(new TextComponentString(TextFormatting.ITALIC + "" + selectedTerm.getDisplayName() + " Selected"));
-				}
-				*/
 			}
 		}
 		return new ActionResult<>(EnumActionResult.SUCCESS, item);
@@ -125,7 +138,10 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 
 	@Override
 	public void openGui(final EntityPlayer player, final boolean isBauble, final int playerSlot) {
-		final ItemStack heldStack = player.inventory.getCurrentItem();
+		ItemStack heldStack = player.getHeldItemMainhand();
+		if (player.openContainer instanceof IWTContainer) {
+			heldStack = ((IWTContainer) player.openContainer).getWirelessTerminal();
+		}
 		if (heldStack.getItem() instanceof ItemWUT) {
 			final Pair<ICustomWirelessTerminalItem, Integer> handler = getSelectedTerminalHandler(heldStack);
 			if (handler != null) {
@@ -140,9 +156,9 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 	public static List<Pair<ICustomWirelessTerminalItem, Integer>> getStoredTerminalHandlers(final ItemStack wut) {
 		final List<Pair<ItemStack, Integer>> t = getStoredTerminalStacks(wut);
 		final List<Pair<ICustomWirelessTerminalItem, Integer>> c = new ArrayList<>();
-		for (int i = 0; i < t.size(); i++) {
-			if (!(c.get(i).getLeft() instanceof ICustomWirelessTerminalItem)) {
-				c.add(Pair.of((ICustomWirelessTerminalItem) t.get(i).getLeft().getItem(), t.get(i).getRight()));
+		for (final Pair<ItemStack, Integer> tPair : t) {
+			if (tPair.getLeft().getItem() instanceof ICustomWirelessTerminalItem) {
+				c.add(Pair.of((ICustomWirelessTerminalItem) tPair.getLeft().getItem(), tPair.getRight()));
 			}
 		}
 		return c;
@@ -188,6 +204,17 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 		return null;
 	}
 
+	public static boolean setSelectedTerminalByHandler(final ItemStack wut, final Class<? extends ICustomWirelessTerminalItem> terminalHandler) {
+		final List<Pair<ICustomWirelessTerminalItem, Integer>> storedHandlers = getStoredTerminalHandlers(wut);
+		for (int i = 0; i < storedHandlers.size(); i++) {
+			if (storedHandlers.get(i).getLeft().equals(terminalHandler)) {
+				setSelectedTerminal(wut, i);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static void setSelectedTerminal(final ItemStack wut, final int index) {
 		if (!wut.hasTagCompound()) {
 			wut.setTagCompound(new NBTTagCompound());
@@ -198,6 +225,24 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 			return;
 		}
 		wut.getTagCompound().setInteger(SELECTEDTERMINAL_KEY, -1);
+	}
+
+	public static ItemStack getStoredTerminalByHandler(final ItemStack wut, final Class<? extends ICustomWirelessTerminalItem> handler) {
+		for (final Pair<ItemStack, Integer> terminal : getStoredTerminalStacks(wut)) {
+			final ItemStack currentTerminal = terminal.getLeft();
+			for (final Class<?> clazz : ClassUtils.getAllInterfaces(currentTerminal.getItem().getClass())) {
+				if (clazz.equals(handler)) {
+					if (wut.hasTagCompound() && !currentTerminal.hasTagCompound()) {
+						final String encKey = ((ItemWT) wut.getItem()).getEncryptionKey(wut);
+						((ItemWT) currentTerminal.getItem()).setEncryptionKey(currentTerminal, encKey, "");
+						WTApi.instance().setInfinityEnergy(currentTerminal, WTApi.instance().getInfinityEnergy(wut));
+						currentTerminal.getTagCompound().setDouble("internalCurrentPower", wut.getTagCompound().getDouble("internalCurrentPower"));
+					}
+					return currentTerminal;
+				}
+			}
+		}
+		return ItemStack.EMPTY;
 	}
 
 	public static ItemStack getStoredTerminalByIndex(final ItemStack wut, final int index) {
@@ -254,9 +299,32 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 	}
 
 	public static ItemStack addTerminal(final ItemStack wut, final ItemStack otherTerminal) {
-		final ItemStack newWut = wut.copy();
+		ItemStack newWut = wut.copy();
 		final NBTTagList nbtList = newWut.getTagCompound().getTagList(STOREDTERMINALS_KEY, NBT.TAG_COMPOUND);
-		final ItemStack emptyOtherTerm = otherTerminal.copy();
+		ItemStack emptyOtherTerm = otherTerminal.copy();
+		boolean wutIsCreative = WTApi.instance().isWTCreative(wut);
+		final boolean otherTerminalIsCreative = WTApi.instance().isWTCreative(otherTerminal);
+		boolean wutContainsCreative = false;
+		for (final Pair<ICustomWirelessTerminalItem, Integer> currentTerminal : getStoredTerminalHandlers(wut)) {
+			if (currentTerminal.getLeft().isCreative()) {
+				wutContainsCreative = true;
+			}
+		}
+		// ensure resulting WUT is creative
+		if (!wutIsCreative && (wutContainsCreative || otherTerminalIsCreative)) {
+			final NBTTagCompound wutAsNBT = wut.serializeNBT();
+			if (wutAsNBT.hasKey("id", NBT.TAG_STRING)) {
+				final String currentRegistryName = wutAsNBT.getString("id");
+				if (currentRegistryName.equals(LibItems.ULTIMATE_TERMINAL.getRegistryName().toString())) {
+					wutAsNBT.setString("id", LibItems.CREATIVE_ULTIMATE_TERMINAL.getRegistryName().toString());
+					newWut = new ItemStack(wutAsNBT);
+				}
+			}
+			wutIsCreative = true;
+		}
+		if (wutIsCreative && !otherTerminalIsCreative) {
+			emptyOtherTerm = WTApi.instance().getWirelessTerminalRegistry().convertToCreative(emptyOtherTerm);
+		}
 		emptyOtherTerm.setTagCompound(null);
 		nbtList.appendTag(emptyOtherTerm.writeToNBT(new NBTTagCompound()));
 		if (otherTerminal.hasTagCompound()) {
@@ -268,26 +336,42 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 		int infinityEnergy = WTApi.instance().getInfinityEnergy(wut);
 		infinityEnergy += WTApi.instance().getInfinityEnergy(otherTerminal);
 		infinityEnergy = infinityEnergy > Integer.MAX_VALUE ? Integer.MAX_VALUE : infinityEnergy;
-		//WTApi.instance().setInfinityEnergy(wut, 0);
-		//WTApi.instance().setInfinityEnergy(otherTerminal, 0);
 		totalPower += powerItem.getAECurrentPower(otherTerminal);
 		final double newPower = totalPower > maxPower ? maxPower : totalPower;
 		newWut.getTagCompound().setDouble("internalCurrentPower", newPower);
 		WTApi.instance().setInfinityEnergy(newWut, infinityEnergy);
-
-		//wut.getTagCompound().setTag(STOREDTERMINALS_KEY, nbtList);
-		//if (!wut.getTagCompound().hasKey(SELECTEDTERMINAL_KEY, NBT.TAG_INT)) {
-		//	wut.getTagCompound().setInteger(SELECTEDTERMINAL_KEY, 0);
-		//}
 		return newWut;
 	}
 
+	public static ItemStack getFullyStockedWut(final boolean creative) {
+		final Map<ICustomWirelessTerminalItem, ICustomWirelessTerminalItem> map = WTApi.instance().getWirelessTerminalRegistry().getNonCreativeToCreativeMap();
+		final Map<ICustomWirelessTerminalItem, ICustomWirelessTerminalItem> mapWithoutWut = new HashMap<>();
+		for (final Map.Entry<ICustomWirelessTerminalItem, ICustomWirelessTerminalItem> entry : map.entrySet()) {
+			if (!isWut(entry.getKey())) {
+				mapWithoutWut.put(entry.getKey(), entry.getValue());
+			}
+		}
+		if (mapWithoutWut.size() < 2) {
+			return ItemStack.EMPTY;
+		}
+		final List<Map.Entry<ICustomWirelessTerminalItem, ICustomWirelessTerminalItem>> mapAsList = Lists.newArrayList(mapWithoutWut.entrySet());
+		final ItemStack initialStackA = creative ? new ItemStack((Item) mapAsList.get(0).getValue()) : new ItemStack((Item) mapAsList.get(0).getKey());
+		final ItemStack initialStackB = creative ? new ItemStack((Item) mapAsList.get(1).getValue()) : new ItemStack((Item) mapAsList.get(1).getKey());
+		ItemStack wut = createNewWUT(initialStackA, initialStackB);
+		if (mapAsList.size() > 2) {
+			for (int i = 2; i < mapAsList.size(); i++) {
+				final ItemStack nextStack = creative ? new ItemStack((Item) mapAsList.get(i).getValue()) : new ItemStack((Item) mapAsList.get(i).getKey());
+				wut = addTerminal(wut, nextStack);
+			}
+		}
+		return wut;
+	}
+
+	private static boolean isWut(final ICustomWirelessTerminalItem terminal) {
+		return terminal instanceof IWirelessUniversalItem;
+	}
+
 	public static boolean isTypeInstalled(final ItemStack wut, final Class<?> type) {
-		/*
-		Set<Pair<ItemStack, Integer>> storedStacks = Sets.newHashSet(getStoredTerminalStacks(wut));
-		boolean x = storedStacks.stream().map(Pair::getLeft).map(ItemStack::getItem).map(Item::getClass).anyMatch(ClassUtils.getAllInterfaces(type)::contains);
-		return x;
-		*/
 		final List<Pair<ItemStack, Integer>> storedStacks = getStoredTerminalStacks(wut);
 		if (wut.getItem() == LibItems.ULTIMATE_TERMINAL) {
 			if (storedStacks.size() > 0) {
@@ -322,7 +406,8 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 
 	public static ItemStack createNewWUT(final ItemStack terminalA, final ItemStack terminalB) {
 		if (terminalA.getItem() instanceof ICustomWirelessTerminalItem && terminalB.getItem() instanceof ICustomWirelessTerminalItem && terminalA.getItem() != terminalB.getItem()) {
-			final ItemStack wut = new ItemStack(LibItems.ULTIMATE_TERMINAL);
+			final ItemStack wut = new ItemStack(WTApi.instance().containsCreativeTerminal((ICustomWirelessTerminalItem) terminalA.getItem(), (ICustomWirelessTerminalItem) terminalB.getItem()) ? LibItems.CREATIVE_ULTIMATE_TERMINAL : LibItems.ULTIMATE_TERMINAL);
+			final boolean isCreative = ((ICustomWirelessTerminalItem) wut.getItem()).isCreative();
 			final NBTTagCompound nbt = new NBTTagCompound();
 			final NBTTagList terminalList = new NBTTagList();
 			String encKey = "";
@@ -332,14 +417,20 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 			int infinityEnergy = WTApi.instance().getInfinityEnergy(terminalA);
 			infinityEnergy += WTApi.instance().getInfinityEnergy(terminalB);
 			infinityEnergy = infinityEnergy > Integer.MAX_VALUE ? Integer.MAX_VALUE : infinityEnergy;
-			WTApi.instance().setInfinityEnergy(terminalA, 0);
-			WTApi.instance().setInfinityEnergy(terminalB, 0);
 			totalPower += powerItem.getAECurrentPower(terminalB);
 			final double newPower = totalPower > maxPower ? maxPower : totalPower;
-			final ItemStack emptyTermA = terminalA.copy();
-			final ItemStack emptyTermB = terminalB.copy();
+			ItemStack emptyTermA = terminalA.copy();
+			ItemStack emptyTermB = terminalB.copy();
 			emptyTermA.setTagCompound(null);
 			emptyTermB.setTagCompound(null);
+			if (isCreative) {
+				if (!((ICustomWirelessTerminalItem) emptyTermA.getItem()).isCreative()) {
+					emptyTermA = WTApi.instance().getWirelessTerminalRegistry().convertToCreative(terminalA);
+				}
+				if (!((ICustomWirelessTerminalItem) emptyTermB.getItem()).isCreative()) {
+					emptyTermB = WTApi.instance().getWirelessTerminalRegistry().convertToCreative(terminalB);
+				}
+			}
 			terminalList.appendTag(emptyTermA.writeToNBT(new NBTTagCompound()));
 			encKey = ((ItemWT) terminalA.getItem()).getEncryptionKey(terminalA);
 			terminalList.appendTag(emptyTermB.writeToNBT(new NBTTagCompound()));
@@ -365,14 +456,20 @@ public class ItemWUT extends ItemWT implements IWirelessUniversalItem {
 		final List<Pair<ItemStack, Integer>> stacks = getStoredTerminalStacks(wut);
 		final ResourceLocation[] icons = new ResourceLocation[stacks.size()];
 		for (int i = 0; i < stacks.size(); i++) {
-			icons[i] = ((ICustomWirelessTerminalItem) stacks.get(i).getLeft().getItem()).getMenuIcon();
+			final Item currentItem = stacks.get(i).getLeft().getItem();
+			if (currentItem instanceof ICustomWirelessTerminalItem) {
+				icons[i] = ((ICustomWirelessTerminalItem) currentItem).getMenuIcon();
+			}
+			else {
+				icons[i] = LibItems.ULTIMATE_TERMINAL.getMenuIcon();
+			}
 		}
 		return icons;
 	}
 
 	@Override
 	public ResourceLocation getMenuIcon() {
-		return new ResourceLocation(LibGlobals.MODID, "textures/items/wut");
+		return new ResourceLocation(WTApi.MODID, "textures/items/wut");
 	}
 
 	@Override

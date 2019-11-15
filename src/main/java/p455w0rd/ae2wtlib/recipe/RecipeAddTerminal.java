@@ -13,7 +13,8 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import p455w0rd.ae2wtlib.api.*;
-import p455w0rd.ae2wtlib.init.*;
+import p455w0rd.ae2wtlib.init.LibItems;
+import p455w0rd.ae2wtlib.init.LibRecipes;
 import p455w0rd.ae2wtlib.items.ItemWUT;
 
 /**
@@ -38,7 +39,7 @@ public class RecipeAddTerminal extends net.minecraftforge.registries.IForgeRegis
 		return REGISTRY;
 	}
 
-	public static RecipeAddTerminal[] getRecipes() {
+	public static List<RecipeAddTerminal> getRecipes() {
 		if (getRegistry().size() > 0) {
 			getRegistry().clear();
 		}
@@ -71,12 +72,16 @@ public class RecipeAddTerminal extends net.minecraftforge.registries.IForgeRegis
 				}
 			}
 		}
-		return getRegistry().toArray(new RecipeAddTerminal[getRegistry().size()]);
+		return getRegistry();
+	}
+
+	public static RecipeAddTerminal[] getRecipesArray() {
+		return getRecipes().toArray(new RecipeAddTerminal[getRecipes().size()]);
 	}
 
 	public static RecipeAddTerminal addRecipe(final ItemStack wut, final ItemStack terminalB) {
 		if (WTApi.instance().getWUTUtility().isWUT(wut) && !WTApi.instance().getWUTUtility().isWUT(terminalB) && WTApi.instance().isAnyWT(terminalB) && !LibRecipes.isEitherCreative(wut, terminalB)) {
-			final RecipeAddTerminal newRecipe = (RecipeAddTerminal) new RecipeAddTerminal(wut, terminalB).setRegistryName(LibGlobals.MODID, "wut_add_" + c++);
+			final RecipeAddTerminal newRecipe = (RecipeAddTerminal) new RecipeAddTerminal(wut, terminalB).setRegistryName(WTApi.MODID, "wut_add_" + c++);
 			final List<IWUTRecipe> rl = new ArrayList<>();
 			for (final RecipeAddTerminal r : getRegistry()) {
 				rl.add(r);
@@ -113,7 +118,7 @@ public class RecipeAddTerminal extends net.minecraftforge.registries.IForgeRegis
 
 	@Override
 	public String getGroup() {
-		return LibGlobals.MODID + ":wut_add";
+		return WTApi.MODID + ":wut_add";
 	}
 
 	@Override

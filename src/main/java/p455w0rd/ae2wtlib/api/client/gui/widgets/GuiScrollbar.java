@@ -2,9 +2,9 @@ package p455w0rd.ae2wtlib.api.client.gui.widgets;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.api.client.IWTGuiScrollbar;
 import p455w0rd.ae2wtlib.api.client.gui.GuiWT;
-import p455w0rd.ae2wtlib.init.LibGlobals;
 
 public class GuiScrollbar implements IWTGuiScrollbar {
 
@@ -20,7 +20,7 @@ public class GuiScrollbar implements IWTGuiScrollbar {
 
 	@Override
 	public void draw(final GuiWT g) {
-		g.mc.renderEngine.bindTexture(new ResourceLocation(LibGlobals.MODID, "textures/gui/states.png"));
+		g.mc.renderEngine.bindTexture(new ResourceLocation(WTApi.MODID, "textures/gui/states.png"));
 		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 
 		if (getRange() == 0) {

@@ -93,7 +93,7 @@ public class FluidStackSizeRenderer extends StackSizeRenderer<IAEFluidStack> {
 		final DecimalFormat format = new DecimalFormat(NUMBER_FORMATS[index]);
 		format.setDecimalFormatSymbols(symbols);
 		format.setRoundingMode(RoundingMode.DOWN);
-		return format.format(originalSize / 1000f);
+		return format.format(originalSize / 1000D);
 	}
 
 }

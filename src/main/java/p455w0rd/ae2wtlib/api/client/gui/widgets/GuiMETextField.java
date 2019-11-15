@@ -21,6 +21,7 @@ public class GuiMETextField extends GuiTextField {
 	private final int _yPos;
 	private final int _width;
 	private final int _height;
+	private final int _fontPad;
 	private int selectionColor = 0xFF00FF00;
 
 	/**
@@ -35,6 +36,7 @@ public class GuiMETextField extends GuiTextField {
 	 */
 	public GuiMETextField(final FontRenderer fontRenderer, final int xPos, final int yPos, final int width, final int height) {
 		super(0, fontRenderer, xPos + PADDING, yPos + PADDING, width - 2 * PADDING - fontRenderer.getCharWidth('_'), height - 2 * PADDING);
+		_fontPad = fontRenderer.getCharWidth('_');
 		_xPos = xPos;
 		_yPos = yPos;
 		_width = width;
@@ -52,7 +54,7 @@ public class GuiMETextField extends GuiTextField {
 	}
 
 	public boolean isMouseIn(final int xCoord, final int yCoord) {
-		final boolean withinXRange = xCoord >= _xPos && xCoord <= _xPos + _width;
+		final boolean withinXRange = _xPos <= xCoord && xCoord < _xPos + _width;
 		final boolean withinYRange = _yPos <= yCoord && yCoord < _yPos + _height;
 		return withinXRange && withinYRange;
 	}
@@ -62,21 +64,37 @@ public class GuiMETextField extends GuiTextField {
 		setSelectionPos(getMaxStringLength());
 	}
 
-	public void setSelectionColor(int color) {
+	public void setSelectionColor(final int color) {
 		selectionColor = color;
 	}
 
 	@Override
+	public void drawTextBox() {
+		if (getVisible()) {
+			if (isFocused()) {
+				drawRect(x - PADDING + 1, y - PADDING + 1, x + width + _fontPad + PADDING - 1, y + height + PADDING - 1, 0xFF606060);
+			}
+			else {
+				drawRect(x - PADDING + 1, y - PADDING + 1, x + width + _fontPad + PADDING - 1, y + height + PADDING - 1, 0xFFA8A8A8);
+			}
+			super.drawTextBox();
+		}
+	}
+
+	@Override
 	public void drawSelectionBox(int startX, int startY, int endX, int endY) {
+		if (!isFocused()) {
+			return;
+		}
 		if (startX < endX) {
-			int i = startX;
+			final int i = startX;
 			startX = endX;
 			endX = i;
 		}
 		startX += 1;
 		endX -= 1;
 		if (startY < endY) {
-			int j = startY;
+			final int j = startY;
 			startY = endY;
 			endY = j;
 		}
@@ -87,12 +105,12 @@ public class GuiMETextField extends GuiTextField {
 		if (startX > x + width) {
 			startX = x + width;
 		}
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
-		float red = (selectionColor >> 16 & 255) / 255.0F;
-		float blue = (selectionColor >> 8 & 255) / 255.0F;
-		float green = (selectionColor & 255) / 255.0F;
-		float alpha = (selectionColor >> 24 & 255) / 255.0F;
+		final Tessellator tessellator = Tessellator.getInstance();
+		final BufferBuilder bufferbuilder = tessellator.getBuffer();
+		final float red = (selectionColor >> 16 & 255) / 255.0F;
+		final float blue = (selectionColor >> 8 & 255) / 255.0F;
+		final float green = (selectionColor & 255) / 255.0F;
+		final float alpha = (selectionColor >> 24 & 255) / 255.0F;
 		GlStateManager.color(red, green, blue, alpha);
 		GlStateManager.disableTexture2D();
 		GlStateManager.enableColorLogic();

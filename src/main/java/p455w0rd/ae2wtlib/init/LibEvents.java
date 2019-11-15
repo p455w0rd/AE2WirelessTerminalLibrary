@@ -48,7 +48,7 @@ import p455w0rdslib.capabilities.CapabilityChunkLoader.ProviderTE;
  * @author p455w0rd
  *
  */
-@EventBusSubscriber(modid = LibGlobals.MODID)
+@EventBusSubscriber(modid = WTApi.MODID)
 public class LibEvents {
 
 	@SubscribeEvent
@@ -65,14 +65,15 @@ public class LibEvents {
 	public static void attachCapabilities(final AttachCapabilitiesEvent<TileEntity> event) {
 		if (event.getObject() instanceof TileController && LibConfig.WT_ENABLE_CONTROLLER_CHUNKLOADER) {
 			final TileController controller = (TileController) event.getObject();
-			event.addCapability(new ResourceLocation(LibGlobals.MODID, "chunkloader"), new ProviderTE(controller));
+			event.addCapability(new ResourceLocation(WTApi.MODID, "chunkloader"), new ProviderTE(controller));
 		}
 		if (WTApi.instance() != null && WTApi.instance().getConfig() != null && WTApi.instance().getConfig().areShadersEnabled() && event.getObject() instanceof TileCharger) {
 			final TileCharger charger = (TileCharger) event.getObject();
-			event.addCapability(new ResourceLocation(LibGlobals.MODID, "pw_light"), PwLib.getChargerProvider(charger));
+			event.addCapability(new ResourceLocation(WTApi.MODID, "pw_light"), PwLib.getChargerProvider(charger));
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public static void onPlace(final BlockEvent.PlaceEvent e) {
 		final World world = e.getWorld();
@@ -138,7 +139,7 @@ public class LibEvents {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onTextureStitch(final TextureStitchEvent.Pre event) {
-		event.getMap().registerSprite(new ResourceLocation(LibGlobals.MODID, "gui/booster_slot"));
+		event.getMap().registerSprite(new ResourceLocation(WTApi.MODID, "gui/booster_slot"));
 	}
 
 	@SideOnly(Side.SERVER)

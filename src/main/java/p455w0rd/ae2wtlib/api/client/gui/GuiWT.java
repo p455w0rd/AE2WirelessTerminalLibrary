@@ -52,7 +52,6 @@ import p455w0rd.ae2wtlib.api.container.slot.SlotBoosterEnergy;
 import p455w0rd.ae2wtlib.api.container.slot.SlotOutput;
 import p455w0rd.ae2wtlib.api.container.slot.SlotPlayerHotBar;
 import p455w0rd.ae2wtlib.client.gui.GuiImgButtonSwitchTerminal;
-import p455w0rd.ae2wtlib.init.LibGlobals;
 import p455w0rd.ae2wtlib.init.LibNetworking;
 import p455w0rd.ae2wtlib.items.ItemWUT;
 import p455w0rd.ae2wtlib.sync.packets.PacketSwitchWutTerminalGui;
@@ -281,7 +280,7 @@ public abstract class GuiWT extends GuiContainer {
 			}
 			else if (slot instanceof SlotBooster || slot instanceof SlotBoosterEnergy) {
 				if (WTApi.instance().getConfig().isInfinityBoosterCardEnabled() && !WTApi.instance().isWTCreative(getWirelessTerminal())) {
-					mc.getTextureManager().bindTexture(new ResourceLocation(LibGlobals.MODID, "textures/gui/states.png"));
+					mc.getTextureManager().bindTexture(new ResourceLocation(WTApi.MODID, "textures/gui/states.png"));
 					GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 					this.drawTexturedModalRect(guiLeft + slot.xPos - 1, guiTop + slot.yPos - 1, 0, 256 - 18, 18, 18);
 					GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -393,7 +392,7 @@ public abstract class GuiWT extends GuiContainer {
 			if (s instanceof AppEngSlot && (((AppEngSlot) s).renderIconWithItem() || is.isEmpty()) && ((AppEngSlot) s).shouldDisplay()) {
 				final AppEngSlot aes = (AppEngSlot) s;
 				if (aes.getIcon() >= 0) {
-					mc.getTextureManager().bindTexture(new ResourceLocation(LibGlobals.MODID, "textures/gui/states.png"));
+					mc.getTextureManager().bindTexture(new ResourceLocation(WTApi.MODID, "textures/gui/states.png"));
 					final Tessellator tessellator = Tessellator.getInstance();
 					final BufferBuilder vb = tessellator.getBuffer();
 					try {

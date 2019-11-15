@@ -7,6 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import p455w0rd.ae2wtlib.api.WTApi;
 
 /**
  * @author p455w0rd
@@ -36,7 +37,7 @@ public class LibConfig {
 
 	@SubscribeEvent
 	public void onConfigChange(final ConfigChangedEvent.OnConfigChangedEvent e) {
-		if (e.getModID().equals(LibGlobals.MODID)) {
+		if (e.getModID().equals(WTApi.MODID)) {
 			preInit();
 		}
 	}

@@ -213,6 +213,16 @@ public class LibApiImpl extends WTApi {
 	}
 
 	@Override
+	public boolean containsCreativeTerminal(final ICustomWirelessTerminalItem... wirelessTerminals) {
+		for (final ICustomWirelessTerminalItem terminal : wirelessTerminals) {
+			if (terminal.isCreative()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public ItemStack getWTBySlot(final EntityPlayer player, final int slot, final Class<? extends ICustomWirelessTerminalItem> type) {
 		return getWTBySlot(player, false, slot, type);
 	}
@@ -222,9 +232,19 @@ public class LibApiImpl extends WTApi {
 		if (isBauble) {
 			return getBaublesUtility().getWTBySlot(player, slot, type);
 		}
-		final ItemStack wirelessTerminal = player.inventory.mainInventory.get(slot);
+		final ItemStack wirelessTerminal = player.inventory.getStackInSlot(slot);
 		if (!wirelessTerminal.isEmpty()) {
 			final List<Class<?>> applicableInterfaces = ClassUtils.getAllInterfaces(wirelessTerminal.getItem().getClass());
+			if (getWUTUtility().isWUT(wirelessTerminal)) {
+				for (final Pair<ICustomWirelessTerminalItem, Integer> currentPair : getWUTUtility().getStoredTerminalHandlers(wirelessTerminal)) {
+					final List<Class<?>> storedInterfaces = ClassUtils.getAllInterfaces(currentPair.getLeft().getClass());
+					for (final Class<?> currentInterface : storedInterfaces) {
+						if (!applicableInterfaces.contains(currentInterface)) {
+							applicableInterfaces.add(currentInterface);
+						}
+					}
+				}
+			}
 			if (!wirelessTerminal.isEmpty() && (applicableInterfaces.contains(type) || getWUTUtility().doesWUTSupportType(wirelessTerminal, type))) {
 				return wirelessTerminal;
 			}
@@ -242,7 +262,7 @@ public class LibApiImpl extends WTApi {
 		if (isBauble) {
 			return getBaublesUtility().getWTBySlot(player, slot, ICustomWirelessTerminalItem.class);
 		}
-		final ItemStack wirelessTerminal = player.inventory.mainInventory.get(slot);
+		final ItemStack wirelessTerminal = player.inventory.getStackInSlot(slot);
 		if (!wirelessTerminal.isEmpty() && wirelessTerminal.getItem() instanceof ICustomWirelessTerminalItem) {
 			return wirelessTerminal;
 		}
@@ -489,6 +509,16 @@ public class LibApiImpl extends WTApi {
 		return stack.getTagCompound();
 	}
 
+	@Override
+	public boolean isTerminalLinked(final ItemStack wirelessTerminal) {
+		String sourceKey = "";
+		if (wirelessTerminal.getItem() instanceof ICustomWirelessTerminalItem && wirelessTerminal.hasTagCompound()) {
+			sourceKey = ((ICustomWirelessTerminalItem) wirelessTerminal.getItem()).getEncryptionKey(wirelessTerminal);
+			return sourceKey != null && !sourceKey.isEmpty();
+		}
+		return false;
+	}
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public String color(final String color) {
@@ -625,6 +655,11 @@ public class LibApiImpl extends WTApi {
 		@Override
 		public List<Pair<ItemStack, Integer>> getStoredTerminals(final ItemStack wut) {
 			return ItemWUT.getStoredTerminalStacks(wut);
+		}
+
+		@Override
+		public List<Pair<ICustomWirelessTerminalItem, Integer>> getStoredTerminalHandlers(final ItemStack wut) {
+			return ItemWUT.getStoredTerminalHandlers(wut);
 		}
 
 	}

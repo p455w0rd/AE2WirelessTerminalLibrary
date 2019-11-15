@@ -28,6 +28,14 @@ import p455w0rd.ae2wtlib.items.ItemInfinityBooster;
 
 public abstract class WTApi {
 
+	public static final String MODID = "ae2wtlib";
+	public static final String VERSION = "1.0.31";
+	public static final String AE2_DEP = "required-after:appliedenergistics2@[rv6-stable-7,);";
+	public static final String AE2WTLIB_DEP = "required-after:" + MODID + "@[" + VERSION + ",);";
+	public static final String BAUBLES_DEP = "after:baubles;";
+	public static final String BASE_DEPS = AE2_DEP + BAUBLES_DEP + p455w0rdslib.LibGlobals.REQUIRE_DEP;
+	public static final String BASE_DEPS_WITH_AE2WTLIB = AE2WTLIB_DEP + BASE_DEPS;
+
 	protected static WTApi api = null;
 
 	@Nullable
@@ -81,6 +89,8 @@ public abstract class WTApi {
 	public abstract ItemStack getWTBySlot(final EntityPlayer player, boolean isBauble, final int slot);
 
 	public abstract ItemStack getFirstWirelessTerminal(EntityPlayer player);
+
+	public abstract boolean containsCreativeTerminal(ICustomWirelessTerminalItem... wirelessTerminals);
 
 	public abstract boolean shouldConsumeBoosters(@Nonnull ItemStack wirelessTerminal);
 
@@ -154,6 +164,9 @@ public abstract class WTApi {
 
 	// Creates a new instance of a GUI scrollbar widget
 	public abstract IWTGuiScrollbar createScrollbar();
+
+	// Checks if terminal is linked via Security Terminal
+	public abstract boolean isTerminalLinked(ItemStack wirelessTerminal);
 
 	// Gets text color via its string name (might remove)
 	@SideOnly(Side.CLIENT)

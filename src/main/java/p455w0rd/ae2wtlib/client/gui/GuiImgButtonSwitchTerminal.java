@@ -9,7 +9,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import p455w0rd.ae2wtlib.init.LibGlobals;
+import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.items.ItemWUT;
 
 /**
@@ -34,7 +34,7 @@ public class GuiImgButtonSwitchTerminal extends GuiButton implements ITooltip {
 		if (visible) {
 			final GuiContainer gui = (GuiContainer) mc.currentScreen;
 			hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
-			mc.renderEngine.bindTexture(new ResourceLocation(LibGlobals.MODID, "textures/gui/states.png"));
+			mc.renderEngine.bindTexture(new ResourceLocation(WTApi.MODID, "textures/gui/states.png"));
 			this.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 			if (!ItemStack.areItemStacksEqual(previousStack, nextStack)) {
 				GlStateManager.scale(0.5, 0.5, 0.5);
@@ -49,7 +49,7 @@ public class GuiImgButtonSwitchTerminal extends GuiButton implements ITooltip {
 				GlStateManager.scale(2.0058, 2, 2);
 				GlStateManager.enableAlpha();
 				GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-				mc.getTextureManager().bindTexture(new ResourceLocation(LibGlobals.MODID, "textures/gui/states.png"));
+				mc.getTextureManager().bindTexture(new ResourceLocation(WTApi.MODID, "textures/gui/states.png"));
 				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 				GL11.glEnable(GL11.GL_BLEND);

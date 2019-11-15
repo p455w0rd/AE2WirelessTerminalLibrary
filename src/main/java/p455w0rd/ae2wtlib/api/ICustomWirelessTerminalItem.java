@@ -30,10 +30,10 @@ public interface ICustomWirelessTerminalItem extends IWirelessTermHandler, IAEIt
 	}
 
 	/**
-	 * Checks if an Infinity Booster Card is installed on the WT
+	 * Checks if an Infinity Booster Card is installed on the WT/has enough infinity energy (depending on configs)
 	 */
 	default boolean hasInfiniteRange(final ItemStack wirelessTerminal) {
-		return WTApi.instance().getConfig().isOldInfinityMechanicEnabled() ? WTApi.instance().isBoosterInstalled(wirelessTerminal) : WTApi.instance().hasInfiniteRange(wirelessTerminal) && WTApi.instance().hasInfinityEnergy(wirelessTerminal);
+		return WTApi.instance().isWTCreative(wirelessTerminal) ? true : WTApi.instance().getConfig().isOldInfinityMechanicEnabled() ? WTApi.instance().isBoosterInstalled(wirelessTerminal) : WTApi.instance().hasInfiniteRange(wirelessTerminal) && WTApi.instance().hasInfinityEnergy(wirelessTerminal);
 	}
 
 	/**

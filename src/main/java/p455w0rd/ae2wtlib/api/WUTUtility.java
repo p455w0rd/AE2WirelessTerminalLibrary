@@ -23,4 +23,6 @@ public abstract class WUTUtility {
 
 	public abstract List<Pair<ItemStack, Integer>> getStoredTerminals(ItemStack wut);
 
+	public abstract List<Pair<ICustomWirelessTerminalItem, Integer>> getStoredTerminalHandlers(final ItemStack wut);
+
 }
