@@ -27,7 +27,7 @@ public class SlotBoosterEnergy extends AppEngSlot {
 
 	public SlotBoosterEnergy(final int xPos, final int yPos) {
 		super(null, 0, xPos, yPos);
-		final ResourceLocation rl = new ResourceLocation(WTApi.MODID, "textures/gui/booster_slot.png");
+		//final ResourceLocation rl = new ResourceLocation(WTApi.MODID, "textures/gui/booster_slot.png");
 		//setBackgroundLocation(rl);
 		//setBackgroundName(LibGlobals.MODID + ":gui/booster_slot");
 		setIIcon(4);

@@ -16,7 +16,6 @@ public final class WTServerPacketHandler extends WTPacketHandlerBase implements 
 		return INSTANCE;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onPacketData(final INetworkInfo manager, final INetHandler handler, final FMLProxyPacket packet, final EntityPlayer player) {
 		final ByteBuf stream = packet.payload();

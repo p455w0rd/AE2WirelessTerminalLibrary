@@ -1,7 +1,5 @@
 package p455w0rd.ae2wtlib.client.gui;
 
-import java.awt.Color;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,8 +16,8 @@ public class GuiMenuButton extends GuiButton {
 
 	protected boolean selected;
 	private final GuiWUTTermSelection gui;
-	private static final Color colorSelected = Color.GREEN;
-	private static final Color colorDeselected = Color.LIGHT_GRAY;
+	//private static final Color colorSelected = Color.GREEN;
+	//private static final Color colorDeselected = Color.LIGHT_GRAY;
 
 	public GuiMenuButton(final int id, final GuiWUTTermSelection gui, final String buttonText) {
 		super(id, 0, 0, 0, 0, buttonText);
@@ -34,7 +32,7 @@ public class GuiMenuButton extends GuiButton {
 		hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 		//drawRect(x, y, x + width, y + height, (selected ? colorSelected : colorDeselected).getRGB());
 		mouseDragged(mc, mouseX, mouseY);
-		final int textColor = !enabled ? 10526880 : hovered ? 16777120 : -1;
+		//final int textColor = !enabled ? 10526880 : hovered ? 16777120 : -1;
 		//mc.fontRenderer.drawString(displayString, x + width / 2 - mc.fontRenderer.getStringWidth(displayString) / 2, y + (height - 8) / 2, textColor);
 	}
 

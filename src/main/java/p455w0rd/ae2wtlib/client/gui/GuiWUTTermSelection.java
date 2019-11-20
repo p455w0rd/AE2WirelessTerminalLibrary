@@ -200,7 +200,7 @@ public class GuiWUTTermSelection extends GuiScreen {// GuiContainer {
 			final int[] pos = stringPositions.get(i);
 			final int xp = pos[0];
 			final int yp = pos[1];
-			final char c = (char) pos[2];
+			//final char c = (char) pos[2];
 
 			final String name = "x";//"\u00a7" + c + tool.getDisplayName();
 
@@ -260,7 +260,7 @@ public class GuiWUTTermSelection extends GuiScreen {// GuiContainer {
 			//mouseY = event.getY();
 			final int screenWidth = width;
 			final int screenHeight = height;
-			final int maxTextWidth = -1;
+			//final int maxTextWidth = -1;
 			List<String> textList = Lists.newArrayList(text.split("\n"));
 			final FontRenderer font = mc.fontRenderer;
 
@@ -361,7 +361,7 @@ public class GuiWUTTermSelection extends GuiScreen {// GuiContainer {
 			GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
 
 			// MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
-			final int tooltipTop = tooltipY;
+			//final int tooltipTop = tooltipY;
 
 			for (int lineNumber = 0; lineNumber < textList.size(); ++lineNumber) {
 				final String line = textList.get(lineNumber);
@@ -396,34 +396,16 @@ public class GuiWUTTermSelection extends GuiScreen {// GuiContainer {
 
 	@Override
 	public void updateScreen() {
-
 		final ImmutableSet<KeyBinding> set = ImmutableSet.of(mc.gameSettings.keyBindForward, mc.gameSettings.keyBindLeft, mc.gameSettings.keyBindBack, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindSneak, mc.gameSettings.keyBindSprint, mc.gameSettings.keyBindJump);
 		for (final KeyBinding k : set) {
 			KeyBinding.setKeyBindState(k.getKeyCode(), GameSettings.isKeyDown(k));
 		}
-
 		timeIn++;
-		final ItemStack tool = wut;
-
-		final boolean curent = true;;
-		final boolean changed = false;
-		/*
-		for (int i = 0; i < 2; i++) {
-		    GuiButton button = buttonList.get(i);
-		    if (builder)
-		        curent = GadgetBuilding.getToolMode(tool) == GadgetBuilding.ToolMode.Surface;
-		    else
-		        curent = i == 0 || GadgetExchanger.getToolMode(tool) == GadgetExchanger.ToolMode.Surface;
-		
-		    if (button.visible != curent) {
-		        button.visible = curent;
-		        changed = true;
-		    }
-		}
-		*/
-		if (changed) {
-			updateButtons(tool);
-		}
+		//final ItemStack tool = wut;
+		//final boolean changed = false;
+		//if (changed) {
+		//	updateButtons(tool);
+		//}
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL11;
 import appeng.client.gui.widgets.ITooltip;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -32,7 +31,7 @@ public class GuiImgButtonSwitchTerminal extends GuiButton implements ITooltip {
 	@Override
 	public void drawButton(final Minecraft mc, final int mouseX, final int mouseY, final float partial) {
 		if (visible) {
-			final GuiContainer gui = (GuiContainer) mc.currentScreen;
+			//final GuiContainer gui = (GuiContainer) mc.currentScreen;
 			hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 			mc.renderEngine.bindTexture(new ResourceLocation(WTApi.MODID, "textures/gui/states.png"));
 			this.drawTexturedModalRect(x, y, 0, 0, 16, 16);

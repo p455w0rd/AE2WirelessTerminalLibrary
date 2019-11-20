@@ -31,7 +31,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import p455w0rd.ae2wtlib.api.*;
@@ -82,7 +82,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 			setValidContainer(false);
 		}
 		else {
-			ReflectionHelper.setPrivateValue(AEBaseContainer.class, this, new WTPlayerSource(ip.player, getActionHost(obj)), "mySrc");
+			ObfuscationReflectionHelper.setPrivateValue(AEBaseContainer.class, this, new WTPlayerSource(ip.player, getActionHost(obj)), "mySrc");
 		}
 		boosterSlotEnabled = enableBoosterSlot;
 		if (boosterSlotEnabled) {
@@ -401,7 +401,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 	@Override
 	protected void bindPlayerInventory(final InventoryPlayer inventoryPlayer, final int offsetX, final int offsetY) {
 		final IItemHandler ih = new PlayerInvWrapper(inventoryPlayer);
-		final HashSet<Integer> locked = ReflectionHelper.getPrivateValue(AEBaseContainer.class, this, "locked");
+		final HashSet<Integer> locked = ObfuscationReflectionHelper.getPrivateValue(AEBaseContainer.class, this, "locked");
 		// bind player inventory
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -427,7 +427,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 
 	protected void bindOffhandSlot(final InventoryPlayer inventory, final int offsetX, final int offsetY) {
 		final IItemHandler ih = new PlayerInvWrapper(inventory);
-		final HashSet<Integer> locked = ReflectionHelper.getPrivateValue(AEBaseContainer.class, this, "locked");
+		final HashSet<Integer> locked = ObfuscationReflectionHelper.getPrivateValue(AEBaseContainer.class, this, "locked");
 		if (locked.contains(40)) {
 			addSlotToContainer(new SlotDisabled(ih, 40, offsetX, offsetY));
 		}
@@ -537,7 +537,7 @@ public class ContainerWT extends AEBaseContainer implements IWTContainer, IConfi
 		sendCustomName();
 
 		for (final IContainerListener listener : listeners) {
-			final HashMap<Integer, SyncData> syncData = ReflectionHelper.getPrivateValue(AEBaseContainer.class, this, "syncData");
+			final HashMap<Integer, SyncData> syncData = ObfuscationReflectionHelper.getPrivateValue(AEBaseContainer.class, this, "syncData");
 			for (final SyncData sd : syncData.values()) {
 				sd.tick(listener);
 			}
