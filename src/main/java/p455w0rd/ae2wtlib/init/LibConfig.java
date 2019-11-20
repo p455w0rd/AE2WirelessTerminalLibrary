@@ -33,7 +33,6 @@ public class LibConfig {
 	public static boolean WT_ENDERMAN_DROP_BOOSTERS = true;
 	public static int WT_ENDERMAN_BOOSTER_DROP_CHANCE = 5;
 	public static boolean SHIFT_CLICK_BAUBLES = true;
-	public static boolean ENABLE_COLORED_LIGHTING = true;
 
 	@SubscribeEvent
 	public void onConfigChange(final ConfigChangedEvent.OnConfigChangedEvent e) {
@@ -60,7 +59,6 @@ public class LibConfig {
 		INFINITY_ENERGY_DRAIN = CONFIG.getInt("InfinityEnergyDrainAmount", DEF_CAT, 15, 5, 100, "Amount of Infinity Energy Consumed every 10 ticks when not in range of a WAP");
 		INFINTY_ENERGY_LOW_WARNING_AMOUNT = CONFIG.getInt("InfinityEnergyWarningAmount", CLIENT_CAT, 5000, 10, 1000000, "Wireless Terminal will show a warning when Infinty Energy drops below this point and infinite range is active");
 		SHIFT_CLICK_BAUBLES = CONFIG.getBoolean("ShiftClickBaubles", CLIENT_CAT, true, "Will shift-clicking a bauble try to put said bauble in a bauble slot before trying to store in system");
-		ENABLE_COLORED_LIGHTING = CONFIG.getBoolean("EnableColoredLightSupport", CLIENT_CAT, true, "If enabled, colored light support will be enabled");
 		if (CONFIG.hasChanged()) {
 			CONFIG.save();
 		}

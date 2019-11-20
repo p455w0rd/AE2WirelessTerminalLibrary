@@ -45,7 +45,6 @@ import p455w0rd.ae2wtlib.items.ItemInfinityBooster;
 import p455w0rd.ae2wtlib.items.ItemWUT;
 import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 import p455w0rdslib.LibGlobals.Mods;
-import p455w0rdslib.P455w0rdsLib;
 
 /**
  * @author p455w0rd
@@ -577,11 +576,6 @@ public class LibApiImpl extends WTApi {
 		@Override
 		public String getConfigFile() {
 			return LibGlobals.CONFIG_FILE;
-		}
-
-		@Override
-		public boolean areShadersEnabled() {
-			return P455w0rdsLib.PROXY.areShadersEnabled() && LibConfig.ENABLE_COLORED_LIGHTING;
 		}
 
 	}

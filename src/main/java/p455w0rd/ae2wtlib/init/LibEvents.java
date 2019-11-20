@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import appeng.tile.misc.TileCharger;
 import appeng.tile.networking.TileController;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -37,7 +36,6 @@ import p455w0rd.ae2wtlib.AE2WTLib;
 import p455w0rd.ae2wtlib.api.WTApi;
 import p455w0rd.ae2wtlib.api.networking.WTPacket;
 import p455w0rd.ae2wtlib.client.render.BaubleRenderDispatcher;
-import p455w0rd.ae2wtlib.integration.PwLib;
 import p455w0rd.ae2wtlib.sync.packets.PacketConfigSync;
 import p455w0rd.ae2wtlib.sync.packets.PacketSyncInfinityEnergy;
 import p455w0rdslib.LibGlobals.Mods;
@@ -66,10 +64,6 @@ public class LibEvents {
 		if (event.getObject() instanceof TileController && LibConfig.WT_ENABLE_CONTROLLER_CHUNKLOADER) {
 			final TileController controller = (TileController) event.getObject();
 			event.addCapability(new ResourceLocation(WTApi.MODID, "chunkloader"), new ProviderTE(controller));
-		}
-		if (WTApi.instance() != null && WTApi.instance().getConfig() != null && WTApi.instance().getConfig().areShadersEnabled() && event.getObject() instanceof TileCharger) {
-			final TileCharger charger = (TileCharger) event.getObject();
-			event.addCapability(new ResourceLocation(WTApi.MODID, "pw_light"), PwLib.getChargerProvider(charger));
 		}
 	}
 

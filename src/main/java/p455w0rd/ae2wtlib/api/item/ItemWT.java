@@ -33,8 +33,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,7 +43,6 @@ import p455w0rd.ae2wtlib.api.client.render.WTItemRenderer;
 import p455w0rd.ae2wtlib.client.render.RenderLayerWT;
 import p455w0rd.ae2wtlib.init.LibConfig;
 import p455w0rd.ae2wtlib.init.LibCreativeTab;
-import p455w0rd.ae2wtlib.integration.PwLib;
 import p455w0rdslib.api.client.ICustomItemRenderer;
 import p455w0rdslib.api.client.ItemLayerWrapper;
 
@@ -446,28 +443,6 @@ public abstract class ItemWT extends AEBasePoweredItem implements ICustomWireles
 	@Override
 	public ICustomItemRenderer getRenderer() {
 		return WTItemRenderer.getRendererForItem(this);
-	}
-
-	@Override
-	public ICapabilityProvider initCapabilities(final ItemStack stack, final NBTTagCompound nbt) {
-		final ICapabilityProvider ae2cap = super.initCapabilities(stack, nbt);
-		return new ICapabilityProvider() {
-			@Override
-			public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
-				return PwLib.checkCap(capability) || ae2cap.hasCapability(capability, facing);
-			}
-
-			@Override
-			public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
-				if (hasCapability(capability, facing)) {
-					if (PwLib.checkCap(capability)) {
-						return PwLib.getStackCapability(stack);
-					}
-					return ae2cap.getCapability(capability, facing);
-				}
-				return null;
-			}
-		};
 	}
 
 }

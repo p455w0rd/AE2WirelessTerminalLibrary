@@ -18,6 +18,4 @@ public abstract class WTConfig {
 
 	public abstract String getConfigFile();
 
-	public abstract boolean areShadersEnabled();
-
 }
